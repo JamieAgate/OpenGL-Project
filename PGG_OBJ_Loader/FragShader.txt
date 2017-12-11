@@ -1,0 +1,88 @@
+#version 430 core
+
+// Input per-fragment data
+// These must correspond to the varying outputs from the vertex shader
+in vec3 vNormalV;
+in vec3 eyeSpaceLightPosV;
+in vec3 eyeSpaceVertPosV;
+in vec2 texCoord;
+in vec3 fragPos;
+
+// Input uniform data - these have values that will be the same for every fragment
+uniform vec3 lightColour = {1.0,1.0,1.0};
+uniform vec3 emissiveColour = {0,0,0};
+uniform vec3 ambientColour  = {1.0f,1.0f,1.0f};
+uniform vec3 diffuseColour  = {1.0f,1.0f,1.0f};
+uniform vec3 specularColour = {1.0f,1.0f,1.0f};
+uniform float shininess     = 50.0f;
+uniform float alpha         = 1.0f;
+uniform vec3 worldLightPos;
+uniform vec3 cameraPos;
+
+// The output of the fragment shader is the fragment's colour
+out vec4 fragColour;
+
+// This is another input to allow us to access a texture
+
+struct Material
+{
+	sampler2D diffuseMap;
+	sampler2D specMap;
+
+	vec3 ambient;
+	vec3 diffuse;
+	vec3 specular;
+	float shininess;
+};
+
+struct Light
+{
+	vec3 position;
+	
+	vec3 ambient;
+	vec3 diffuse;
+	vec3 specular;
+	
+	float constant;
+	float linear;
+	float quadratic;
+};
+
+uniform Material material;
+
+uniform Light light;
+void main()
+{
+	// Calculate the direction from the sample position to the light
+	vec3 lightDir = normalize( eyeSpaceLightPosV - fragPos );
+	
+	// Ensure the normal is a unit vector
+	vec3 normal = normalize( vNormalV );
+	
+	//calculate ambient
+	vec3 ambient = light.ambient * vec3(texture(material.diffuseMap, texCoord));
+	
+	// Calculate diffuse lighting
+	float diff = max(dot(normal,lightDir),0.0);
+	vec3 diffuse = light.diffuse * diff * vec3(texture(material.diffuseMap, texCoord));
+	
+	//Calculate specular lighting
+	float specStrength = 1.0;
+	vec3 specDir = normalize(cameraPos - fragPos);
+	vec3 reflectDir = reflect(-lightDir,normal);
+	float spec = pow(max(dot(specDir,reflectDir),0.0),material.shininess);
+	vec3 specular = light.specular * spec * vec3(texture(material.specMap, texCoord));
+
+	
+	float distance = length(light.position - fragPos);
+	float attenuation = 1.0 / (light.constant + light.linear * distance + light.quadratic * (distance * distance));
+	
+	ambient *= attenuation;
+	diffuse *= attenuation;
+	specular *= attenuation;
+	
+	// Final colour uses the texture colour for all components
+	// If you want a separate texture for specular you will need to change this
+	fragColour = vec4((ambient + diffuse + specular), alpha);
+	
+}
