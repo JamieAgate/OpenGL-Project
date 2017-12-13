@@ -241,7 +241,6 @@ unsigned int Material::LoadTexture( std::string filename )
 	return texName;
 }
 
-
 void Material::SetMatrices(glm::mat4 modelMatrix, glm::mat4 invModelMatrix, glm::mat4 viewMatrix, glm::mat4 projMatrix)
 {
 	glUseProgram( _shaderProgram );
@@ -256,8 +255,6 @@ void Material::Apply()
 {
 	glUseProgram( _shaderProgram );
 
-	glUniform3fv(_shaderWSLightPosLocation, 1, glm::value_ptr(_lightPosition));
-	
 	glUniform3fv( _shaderEmissiveColLocation, 1, glm::value_ptr(_emissiveColour) );
 	glUniform3fv( _shaderDiffuseColLocation, 1, glm::value_ptr(_diffuseColour) );
 	glUniform3fv( _shaderSpecularColLocation, 1, glm::value_ptr(_specularColour) );
@@ -280,6 +277,43 @@ void Material::Apply()
 	glUniform1f(glGetUniformLocation(_shaderProgram, "light.linear"), 0.09f);
 	glUniform1f(glGetUniformLocation(_shaderProgram, "light.quadratic"), 0.032f);
 
+	setVec3("dirLight.direction", 4.0f, 6.0f, 3.0f);
+	setVec3("dirLight.ambient", 0.05f, 0.05f, 0.05f);
+	setVec3("dirLight.diffuse", 0.4f, 0.4f, 0.4f);
+	setVec3("dirLight.specular", 0.5f, 0.5f, 0.5f);
+	// point light 1
+	setVec3("pointLights[0].position", _lightPosition[0].x, _lightPosition[0].y, _lightPosition[0].z);
+	setVec3("pointLights[0].ambient", 0.05f, 0.05f, 0.05f);
+	setVec3("pointLights[0].diffuse", 0.8f, 0.8f, 0.8f);
+	setVec3("pointLights[0].specular", 1.0f, 1.0f, 1.0f);
+	setFloat("pointLights[0].constant", 1.0f);
+	setFloat("pointLights[0].linear", 0.09);
+	setFloat("pointLights[0].quadratic", 0.032);
+	// point light 2
+	setVec3("pointLights[1].position", _lightPosition[1].x, _lightPosition[1].y, _lightPosition[1].z);
+	setVec3("pointLights[1].ambient", 0.05f, 0.05f, 0.05f);
+	setVec3("pointLights[1].diffuse", 0.8f, 0.8f, 0.8f);
+	setVec3("pointLights[1].specular", 1.0f, 1.0f, 1.0f);
+	setFloat("pointLights[1].constant", 1.0f);
+	setFloat("pointLights[1].linear", 0.09);
+	setFloat("pointLights[1].quadratic", 0.032);
+	// point light 3
+	setVec3("pointLights[2].position", _lightPosition[2].x, _lightPosition[2].y, _lightPosition[2].z);
+	setVec3("pointLights[2].ambient", 0.05f, 0.05f, 0.05f);
+	setVec3("pointLights[2].diffuse", 0.8f, 0.8f, 0.8f);
+	setVec3("pointLights[2].specular", 1.0f, 1.0f, 1.0f);
+	setFloat("pointLights[2].constant", 1.0f);
+	setFloat("pointLights[2].linear", 0.09);
+	setFloat("pointLights[2].quadratic", 0.032);
+	// point light 4
+	setVec3("pointLights[3].position", _lightPosition[3].x, _lightPosition[3].y, _lightPosition[3].z);
+	setVec3("pointLights[3].ambient", 0.05f, 0.05f, 0.05f);
+	setVec3("pointLights[3].diffuse", 0.8f, 0.8f, 0.8f);
+	setVec3("pointLights[3].specular", 1.0f, 1.0f, 1.0f);
+	setFloat("pointLights[3].constant", 1.0f);
+	setFloat("pointLights[3].linear", 0.09);
+	setFloat("pointLights[3].quadratic", 0.032);
+
 	glActiveTexture(GL_TEXTURE0);
 	glUniform1i(_shaderTex1SamplerLocation,0);
 	glBindTexture(GL_TEXTURE_2D, _texture1);
@@ -287,4 +321,22 @@ void Material::Apply()
 	glActiveTexture(GL_TEXTURE1);
 	glUniform1i(_shaderSpecularLocation, 1);
 	glBindTexture(GL_TEXTURE_2D, m_specularMap);
+}
+
+void Material::setBool(const std::string &name, bool value) const
+{
+	glUniform1i(glGetUniformLocation(_shaderProgram, name.c_str()), (int)value);
+}
+void Material::setInt(const std::string &name, int value) const
+{
+	glUniform1i(glGetUniformLocation(_shaderProgram, name.c_str()), value);
+}
+void Material::setFloat(const std::string &name, float value) const
+{
+	glUniform1f(glGetUniformLocation(_shaderProgram, name.c_str()), value);
+}
+
+void Material::setVec3(const std::string &name, float x, float y, float z) const
+{
+	glUniform3f(glGetUniformLocation(_shaderProgram, name.c_str()), x, y, z);
 }

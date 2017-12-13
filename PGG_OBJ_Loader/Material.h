@@ -26,7 +26,10 @@ public:
 	void SetSpecularColour( glm::vec3 input ) { _specularColour = input;}
 
 	// Set light position in world space
-	void SetLightPosition( glm::vec3 input ) { _lightPosition = input;}
+	void SetLightPosition( glm::vec3 input[] ) { _lightPosition[0] = input[0]; _lightPosition[1] = input[1];
+	_lightPosition[2] = input[2];
+	_lightPosition[3] = input[3];
+	}
 	void SetCameraPos(glm::vec3 _v) { m_cameraPos = _v; }
 	void SetCamFront(glm::vec3 _v) { m_camFront = _v; }
 
@@ -36,6 +39,10 @@ public:
 	bool SetTexture( std::string filename ) {_texture1 = LoadTexture(filename); return _texture1>0;}
 	bool SetSpecular(std::string _file) { m_specularMap = LoadTexture(_file); return m_specularMap > 0; }
 
+	void setBool(const std::string &name, bool value) const;  
+    void setInt(const std::string &name, int value) const;   
+    void setFloat(const std::string &name, float value) const;
+	void setVec3(const std::string &name, float x, float y, float z) const;
 	// Sets the material, applying the shaders
 	void Apply();
 
@@ -61,7 +68,7 @@ protected:
 
 	// Local store of material properties to be sent to the shader
 	glm::vec3 _emissiveColour, _diffuseColour, _specularColour;
-	glm::vec3 _lightPosition, m_cameraPos, m_camFront;
+	glm::vec3 _lightPosition[4], m_cameraPos, m_camFront;
 
 	// Loads a .bmp from file
 	unsigned int LoadTexture( std::string filename );

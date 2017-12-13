@@ -11,17 +11,31 @@ Scene::Scene()
 	_projMatrix = glm::perspective(45.0f, 1.0f, 0.1f, 100.0f);
 
 	_lightPosition = glm::vec3(5.0f,5.0f,5.0f);
+
+	glm::vec3 pointLightPositions[] = {
+		glm::vec3(5.0f,  5.0f,  5.0f),
+		glm::vec3(-5.0f, -5.0f, -5.0f),
+		glm::vec3(-4.0f,  2.0f, -12.0f),
+		glm::vec3(0.0f,  10.0f, 0.0f)
+	};
+
 	input = new InputManager();
 	m_cam = new Camera(glm::vec3(0.0f, 0.0f, 3.5f),input);
+	m_lightManager = new LightManager(input);
+
+	m_lightManager->AddLight("sphere.obj", "VertShader.txt", "LampFragShader.txt", "Image1.bmp", pointLightPositions[0], glm::vec3{ 0.01f,0.01f,0.01f });
+	m_lightManager->AddLight("sphere.obj", "VertShader.txt", "LampFragShader.txt", "Image1.bmp", pointLightPositions[1], glm::vec3{ 0.01f,0.01f,0.01f });
+	m_lightManager->AddLight("sphere.obj", "VertShader.txt", "LampFragShader.txt", "Image1.bmp", pointLightPositions[2], glm::vec3{ 0.01f,0.01f,0.01f });
+	m_lightManager->AddLight("sphere.obj", "VertShader.txt", "LampFragShader.txt", "Image1.bmp", pointLightPositions[3], glm::vec3{ 0.01f,0.01f,0.01f });
+
+	m_lightManager->LoadLightPositions();
 
 	GameObject* chair = new GameObject("Chair.obj", "VertShader.txt", "FragShader.txt", "leather.bmp","leather.bmp" ,_lightPosition, glm::vec3{ 0.01f,0.01f,0.01f }, glm::vec3{0.0f,0.0f,0.0f},m_cam);
-	Light* sphereLight = new Light("sphere.obj", "VertShader.txt", "LampFragShader.txt", "Image1.bmp", _lightPosition, glm::vec3{ 0.01f,0.01f,0.01f }, _lightPosition,input);
 	GameObject* ground = new GameObject("Ground.obj", "VertShader.txt", "FragShader.txt", "red.bmp", "red.bmp", _lightPosition, glm::vec3{ 0.1f,0.1f,0.1f }, glm::vec3{ -1.0f,-1.0f,-1.0f }, m_cam);
 	GameObject* box = new GameObject("box.obj", "VertShader.txt", "FragShader.txt", "boxtex.bmp", "specMap.bmp", _lightPosition, glm::vec3{ 0.05f,0.05f,0.05f }, glm::vec3{ 2.0f,2.0f, 0.01f }, m_cam);
 
-	m_gameObjManager = new GameObjectManager(m_cam);
+	m_gameObjManager = new GameObjectManager(m_cam, m_lightManager);
 	m_gameObjManager->AddNewGameObject("Chair", chair);
-	m_gameObjManager->AddNewGameObject("SphereLight", sphereLight);
 	m_gameObjManager->AddNewGameObject("Ground", ground);
 	m_gameObjManager->AddNewGameObject("Box", box);
 
@@ -50,7 +64,6 @@ void Scene::Draw()
 {
 	// Draw that model, giving it the camera's position and projection
 	m_gameObjManager->Draw(_projMatrix);
-
 }
 
 

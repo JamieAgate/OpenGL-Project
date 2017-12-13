@@ -9,7 +9,6 @@ GameObject::GameObject(char* _objFile, char* _vertShader, char* _fragShader, cha
 	modelMaterial->LoadShaders(_vertShader, _fragShader);
 	modelMaterial->SetDiffuseColour(glm::vec3(1.0f, 1.0f, 1.0f));
 	modelMaterial->SetTexture(_texture);
-	modelMaterial->SetLightPosition(_lightPos);
 	if (_specMap != "")
 	{
 		modelMaterial->SetSpecular(_specMap);

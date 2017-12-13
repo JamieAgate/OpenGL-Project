@@ -4,6 +4,7 @@
 #include "Mesh.h"
 #include "Material.h"
 #include "Camera.h"
+#include "LightManager.h"
 
 #include <string>
 #include <vector>
@@ -12,7 +13,7 @@
 class GameObjectManager
 {
 public:
-	GameObjectManager(Camera* _cam);
+	GameObjectManager(Camera* _cam, LightManager* _lightManager);
 	~GameObjectManager();
 
 	void AddNewGameObject(std::string _name, GameObject* _object);
@@ -24,5 +25,6 @@ public:
 private:
 	std::map<std::string, GameObject*> m_gameObjectVector;
 	Camera* m_cam;
+	LightManager* m_lightManager;
 };
 #endif // !GAMEOBJECTMANAGER_H_

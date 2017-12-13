@@ -1,8 +1,9 @@
 #include "GameObjectManager.h"
 
-GameObjectManager::GameObjectManager(Camera* _cam)
+GameObjectManager::GameObjectManager(Camera* _cam, LightManager* _lightManager)
 {
 	m_cam = _cam;
+	m_lightManager = _lightManager;
 }
 
 GameObjectManager::~GameObjectManager()
@@ -26,20 +27,26 @@ void GameObjectManager::RemoveGameObject(std::string _id)
 
 void GameObjectManager::Update(float _deltaT)
 {
+	glm::vec3 arr[4];
+	for (int i = 0; i < 4; i++)
+	{
+		arr[i] = m_lightManager->GetLightAt(i);
+	}
+
 	for (auto const& obj : m_gameObjectVector)
 	{
 		obj.second->Update(_deltaT);
+		obj.second->SetLightPosVector(arr);
 	}
 	m_cam->Update(_deltaT);
 }
 
 void GameObjectManager::Draw(glm::mat4 _projMat)
 {
-	glm::vec3 light = m_gameObjectVector.at("SphereLight")->GetPos();
 	for (auto const& obj : m_gameObjectVector)
 	{
-	/*	obj.second->SetLightPos(obj.second->GetCamPos());
-		obj.second->SetCamFront(obj.second->GetCamFront());*/
 		obj.second->Draw(m_cam->GetViewMat(),_projMat);
 	}
+
+	m_lightManager->Draw(m_cam->GetViewMat(), _projMat);
 }

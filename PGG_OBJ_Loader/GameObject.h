@@ -22,7 +22,7 @@ public:
 	void MoveY(float _y) { m_position.y += _y; }
 	void MoveZ(float _z) { m_position.z += _z; }
 
-	void SetLightPos(glm::vec3 _l) { _material->SetLightPosition(_l); }
+	void SetLightPosVector(glm::vec3 _l[]) { _material->SetLightPosition(_l); }
 	void SetCamFront(glm::vec3 _c) { _material->SetCamFront(_c); }
 
 	glm::vec3 GetPos() { return m_position; }
