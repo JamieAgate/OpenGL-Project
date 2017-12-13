@@ -36,6 +36,7 @@ void GameObject::Update( float deltaTs )
 	if (cam != nullptr)
 	{
 		_material->SetCameraPos(cam->GetCamPos());
+		_material->SetCamFront(cam->GetCamFront());
 	}
 }
 

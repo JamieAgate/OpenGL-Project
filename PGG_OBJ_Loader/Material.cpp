@@ -269,7 +269,10 @@ void Material::Apply()
 	glUniform3f(glGetUniformLocation(_shaderProgram, "material.specular"), 0.5f, 0.5f, 0.5f);
 	glUniform1f(glGetUniformLocation(_shaderProgram, "material.shininess"), 32.0f);
 
-	glUniform3f(glGetUniformLocation(_shaderProgram, "light.position"), _lightPosition.x, _lightPosition.y, _lightPosition.z);
+	glUniform3f(glGetUniformLocation(_shaderProgram, "light.position"), m_cameraPos.x, m_cameraPos.y, m_cameraPos.z);
+	glUniform3f(glGetUniformLocation(_shaderProgram, "light.direction"), m_camFront.x, m_camFront.y, m_camFront.z);
+	glUniform1f(glGetUniformLocation(_shaderProgram, "light.cutOff"), glm::cos(glm::radians(12.5f)));
+	glUniform1f(glGetUniformLocation(_shaderProgram, "light.outerCutOff"), glm::cos(glm::radians(17.5f)));
 	glUniform3f(glGetUniformLocation(_shaderProgram, "light.ambient"), 0.2f, 0.2f, 0.2f);
 	glUniform3f(glGetUniformLocation(_shaderProgram, "light.diffuse"), 0.5f, 0.5f, 0.5f);
 	glUniform3f(glGetUniformLocation(_shaderProgram, "light.specular"), 1.0f, 1.0f, 1.0f);

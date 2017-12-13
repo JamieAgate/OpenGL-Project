@@ -21,9 +21,13 @@ public:
 	void MoveX(float _x) { m_position.x += _x; }
 	void MoveY(float _y) { m_position.y += _y; }
 	void MoveZ(float _z) { m_position.z += _z; }
+
 	void SetLightPos(glm::vec3 _l) { _material->SetLightPosition(_l); }
+	void SetCamFront(glm::vec3 _c) { _material->SetCamFront(_c); }
 
 	glm::vec3 GetPos() { return m_position; }
+	glm::vec3 GetCamPos() { return cam->GetCamPos(); }
+	glm::vec3 GetCamFront() { return cam->GetCamFront(); }
 
 	// Game object is current hard-coded to rotate
 	virtual void Update( float deltaTs );

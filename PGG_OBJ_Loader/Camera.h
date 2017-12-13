@@ -13,6 +13,7 @@ public:
 	void Update(float _delataT);
 	glm::mat4 GetViewMat() { return m_viewMatrix; }
 	glm::vec3 GetCamPos() { return m_camPos; }
+	glm::vec3 GetCamFront() { return m_camFront; }
 
 private:
 	InputManager* m_input;

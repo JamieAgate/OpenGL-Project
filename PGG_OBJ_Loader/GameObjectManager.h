@@ -3,6 +3,7 @@
 #include "GameObject.h"
 #include "Mesh.h"
 #include "Material.h"
+#include "Camera.h"
 
 #include <string>
 #include <vector>
@@ -11,7 +12,7 @@
 class GameObjectManager
 {
 public:
-	GameObjectManager();
+	GameObjectManager(Camera* _cam);
 	~GameObjectManager();
 
 	void AddNewGameObject(std::string _name, GameObject* _object);
@@ -19,8 +20,9 @@ public:
 
 	void Update(float _deltaT);
 
-	void Draw(glm::mat4 _viewMat, glm::mat4 _projMat);
+	void Draw(glm::mat4 _projMat);
 private:
 	std::map<std::string, GameObject*> m_gameObjectVector;
+	Camera* m_cam;
 };
 #endif // !GAMEOBJECTMANAGER_H_

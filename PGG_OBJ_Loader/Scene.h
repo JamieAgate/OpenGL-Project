@@ -23,7 +23,9 @@ public:
 protected:
 	InputManager* input;
 	GameObjectManager* m_gameObjManager;
+	
 	Camera* m_cam;
+
 	glm::mat4 _projMatrix;
 	glm::vec3 _lightPosition;
 };

@@ -28,6 +28,7 @@ public:
 	// Set light position in world space
 	void SetLightPosition( glm::vec3 input ) { _lightPosition = input;}
 	void SetCameraPos(glm::vec3 _v) { m_cameraPos = _v; }
+	void SetCamFront(glm::vec3 _v) { m_camFront = _v; }
 
 	// Sets texture
 	// This applies to ambient, diffuse and specular colours
@@ -60,7 +61,7 @@ protected:
 
 	// Local store of material properties to be sent to the shader
 	glm::vec3 _emissiveColour, _diffuseColour, _specularColour;
-	glm::vec3 _lightPosition, m_cameraPos;
+	glm::vec3 _lightPosition, m_cameraPos, m_camFront;
 
 	// Loads a .bmp from file
 	unsigned int LoadTexture( std::string filename );
