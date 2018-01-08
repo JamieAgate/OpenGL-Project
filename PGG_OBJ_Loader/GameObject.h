@@ -11,6 +11,7 @@ class GameObject
 public:
 
 	GameObject(char* _objFile, char* _vertShader, char* _fragShader, char* _texture,char* _specMap, glm::vec3 _lightPos, glm::vec3 _scale, glm::vec3 _pos, Camera* _cam);
+	GameObject(char* _vertShader, char* _fragShader, char* _obj,Camera* _cam);
 	~GameObject();
 
 	void SetMesh(Mesh *input) {_mesh = input;}

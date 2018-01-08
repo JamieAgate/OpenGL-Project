@@ -6,7 +6,6 @@
 #include <GLM/gtc/matrix_transform.hpp>
 #include "Material.h"
 
-
 Material::Material()
 {
 	// Initialise everything here
@@ -178,6 +177,7 @@ bool Material::LoadShaders( std::string vertFilename, std::string fragFilename )
 
 	_shaderTex1SamplerLocation = glGetUniformLocation( _shaderProgram, "material.diffuseMap" );
 	_shaderSpecularLocation = glGetUniformLocation(_shaderProgram, "material.specMap");
+	_shaderCubeMapLocation = glGetUniformLocation(_shaderProgram, "skybox");
 
 	return true;
 }
@@ -317,6 +317,10 @@ void Material::Apply()
 	glActiveTexture(GL_TEXTURE0);
 	glUniform1i(_shaderTex1SamplerLocation,0);
 	glBindTexture(GL_TEXTURE_2D, _texture1);
+
+	glDepthMask(GL_FALSE);
+	glBindTexture(GL_TEXTURE_CUBE_MAP, _skyboxTex);
+	glDepthMask(GL_TRUE);
 
 	glActiveTexture(GL_TEXTURE1);
 	glUniform1i(_shaderSpecularLocation, 1);

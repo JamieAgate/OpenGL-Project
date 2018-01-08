@@ -38,6 +38,7 @@ public:
 	// If you want textures for anything else, you'll need to do that yourself ;)
 	bool SetTexture( std::string filename ) {_texture1 = LoadTexture(filename); return _texture1>0;}
 	bool SetSpecular(std::string _file) { m_specularMap = LoadTexture(_file); return m_specularMap > 0; }
+	bool ChangeTexture(unsigned int _tex) { _skyboxTex = _tex; return _texture1 > 0; }
 
 	void setBool(const std::string &name, bool value) const;  
     void setInt(const std::string &name, int value) const;   
@@ -65,6 +66,7 @@ protected:
 	int _shaderWSLightPosLocation;
 	int _shaderTex1SamplerLocation;
 	int _shaderSpecularLocation;
+	int _shaderCubeMapLocation;
 
 	// Local store of material properties to be sent to the shader
 	glm::vec3 _emissiveColour, _diffuseColour, _specularColour;
@@ -75,6 +77,7 @@ protected:
 	
 	// OpenGL handle for the texture
 	unsigned int _texture1;
+	unsigned int _skyboxTex;
 	unsigned int m_specularMap;
 
 };

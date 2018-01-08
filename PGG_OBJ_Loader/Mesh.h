@@ -17,6 +17,7 @@ public:
 	
 	// OBJ file must be triangulated
 	void LoadOBJ( std::string filename );
+	void CreateMesh(float verticies[]);
 
 	// Draws the mesh - must have shaders applied for this to display!
 	void Draw();

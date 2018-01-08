@@ -5,6 +5,7 @@
 #include "GameObjectManager.h"
 #include "Light.h"
 #include "LightManager.h"
+#include "Skybox.h"
 
 #include <GLM/glm.hpp> // This is the main GLM header
 #include <GLM/gtc/matrix_transform.hpp> // This one lets us use matrix transformations

@@ -149,6 +149,8 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <Text Include="FragShader.txt" />
+    <Text Include="SkyboxFragShader.txt" />
+    <Text Include="SkyboxVertShader.txt" />
     <Text Include="VertShader.txt" />
   </ItemGroup>
   <ItemGroup>
@@ -163,6 +165,7 @@
     <ClCompile Include="Material.cpp" />
     <ClCompile Include="Mesh.cpp" />
     <ClCompile Include="Scene.cpp" />
+    <ClCompile Include="Skybox.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Camera.h" />
@@ -175,6 +178,7 @@
     <ClInclude Include="Material.h" />
     <ClInclude Include="Mesh.h" />
     <ClInclude Include="Scene.h" />
+    <ClInclude Include="Skybox.h" />
     <ClInclude Include="wglew.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

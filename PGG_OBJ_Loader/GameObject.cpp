@@ -24,6 +24,69 @@ GameObject::GameObject(char* _objFile, char* _vertShader, char* _fragShader, cha
 	cam = _cam;
 }
 
+GameObject::GameObject(char* _vertShader, char* _fragShader, char* _obj, Camera* _cam)
+{
+	Material *modelMaterial = new Material();
+	modelMaterial->LoadShaders(_vertShader, _fragShader);
+	modelMaterial->SetDiffuseColour(glm::vec3(1.0f, 1.0f, 1.0f));
+
+	Mesh *modelMesh = new Mesh();
+
+	float skyboxVertices[] = {
+		// positions          
+		-50.0f,  50.0f, -50.0f,
+		-50.0f, -50.0f, -50.0f,
+		50.0f, -50.0f, -50.0f,
+		50.0f, -50.0f, -50.0f,
+		50.0f,  50.0f, -50.0f,
+		-50.0f,  50.0f, -50.0f,
+
+		-50.0f, -50.0f,  50.0f,
+		-50.0f, -50.0f, -50.0f,
+		-50.0f,  50.0f, -50.0f,
+		-50.0f,  50.0f, -50.0f,
+		-50.0f,  50.0f,  50.0f,
+		-50.0f, -50.0f,  50.0f,
+
+		50.0f, -50.0f, -50.0f,
+		50.0f, -50.0f,  50.0f,
+		50.0f,  50.0f,  50.0f,
+		50.0f,  50.0f,  50.0f,
+		50.0f,  50.0f, -50.0f,
+		50.0f, -50.0f, -50.0f,
+
+		-50.0f, -50.0f,  50.0f,
+		-50.0f,  50.0f,  50.0f,
+		50.0f,  50.0f,  50.0f,
+		50.0f,  50.0f,  50.0f,
+		50.0f, -50.0f,  50.0f,
+		-50.0f, -50.0f,  50.0f,
+
+		-50.0f,  50.0f, -50.0f,
+		50.0f,  50.0f, -50.0f,
+		50.0f,  50.0f,  50.0f,
+		50.0f,  50.0f,  50.0f,
+		-50.0f,  50.0f,  50.0f,
+		-50.0f,  50.0f, -50.0f,
+
+		-50.0f, -50.0f, -50.0f,
+		-50.0f, -50.0f,  50.0f,
+		50.0f, -50.0f, -50.0f,
+		50.0f, -50.0f, -50.0f,
+		-50.0f, -50.0f,  50.0f,
+		50.0f, -50.0f,  50.0f
+	};
+
+	modelMesh->CreateMesh(skyboxVertices);
+
+	m_scale = { 2.0f,2.0f,2.0f };
+
+	_material = modelMaterial;
+	_mesh = modelMesh;
+	cam = _cam;
+	m_position = { 0.0f,0.0f,0.0f };
+}
+
 GameObject::~GameObject()
 {
 	delete _mesh;
