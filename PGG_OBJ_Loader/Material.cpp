@@ -314,6 +314,18 @@ void Material::Apply()
 	setFloat("pointLights[3].linear", 0.09);
 	setFloat("pointLights[3].quadratic", 0.032);
 
+	//spotlight
+	setVec3("flaslight.position", m_cameraPos.x, m_cameraPos.y, m_cameraPos.z);
+	setVec3("flashlight.direction", m_camFront.x, m_camFront.y, m_camFront.z);
+	setFloat("flashlight.cutOff", glm::cos(glm::radians(12.5f)));
+	setFloat("flashlight.outerCutOff", glm::cos(glm::radians(17.5f)));
+	setVec3("flashlight.ambient", 0.2f, 0.2f, 0.2f);
+	setVec3("flashlight.diffuse", 0.5f, 0.5f, 0.5f);
+	setVec3("flashlight.specular", 1.0f, 1.0f, 1.0f);
+	setFloat("flashlight.constant", 1.0f);
+	setFloat("flashlight.linear", 0.09f);
+	setFloat("flashlight.quadratic", 0.032f);
+
 	glActiveTexture(GL_TEXTURE0);
 	glUniform1i(_shaderTex1SamplerLocation,0);
 	glBindTexture(GL_TEXTURE_2D, _texture1);
