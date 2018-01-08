@@ -111,11 +111,11 @@ void main()
 	
 	vec3 result = {0.0f,0.0f,0.0f};
 	
-	//result += calcDirLight(dirlight,normal,viewDir);
+	result += calcDirLight(dirlight,normal,viewDir);
 	
 	for(int i = 0; i < NR_POINT_LIGHTS; i++)
 	{
-		//result += calcPointLights(pointLights[i],normal,fragPos,viewDir);
+		result += calcPointLights(pointLights[i],normal,fragPos,viewDir);
 	}
 	
 	result += calcSpotLight(flashlight,normal,fragPos,viewDir);

@@ -315,10 +315,10 @@ void Material::Apply()
 	setFloat("pointLights[3].quadratic", 0.032);
 
 	//spotlight
-	setVec3("flaslight.position", m_cameraPos.x, m_cameraPos.y, m_cameraPos.z);
+	setVec3("flashlight.position", m_cameraPos.x, m_cameraPos.y, m_cameraPos.z);
 	setVec3("flashlight.direction", m_camFront.x, m_camFront.y, m_camFront.z);
 	setFloat("flashlight.cutOff", glm::cos(glm::radians(12.5f)));
-	setFloat("flashlight.outerCutOff", glm::cos(glm::radians(15.0f)));
+	setFloat("flashlight.outerCutOff", glm::cos(glm::radians(17.5f)));
 	setVec3("flashlight.ambient", 0.0f, 0.0f, 0.0f);
 	setVec3("flashlight.diffuse", 1.0f, 1.0f, 1.0f);
 	setVec3("flashlight.specular", 1.0f, 1.0f, 1.0f);
