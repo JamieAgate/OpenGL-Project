@@ -1,6 +1,8 @@
 #ifndef __GAME_OBJECT__
 #define __GAME_OBJECT__
 
+#include <iostream>
+
 #include "Mesh.h"
 #include "Material.h"
 #include "Camera.h"

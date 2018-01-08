@@ -99,6 +99,8 @@ void GameObject::Update( float deltaTs )
 	{
 		_material->SetCameraPos(cam->GetCamPos());
 		_material->SetCamFront(cam->GetCamFront());
+
+		//std::cout << cam->GetCamFront().x << ", " << cam->GetCamFront().y << ", " << cam->GetCamFront().z << "\n";
 	}
 }
 

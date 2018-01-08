@@ -266,16 +266,16 @@ void Material::Apply()
 	glUniform3f(glGetUniformLocation(_shaderProgram, "material.specular"), 0.5f, 0.5f, 0.5f);
 	glUniform1f(glGetUniformLocation(_shaderProgram, "material.shininess"), 32.0f);
 
-	glUniform3f(glGetUniformLocation(_shaderProgram, "light.position"), m_cameraPos.x, m_cameraPos.y, m_cameraPos.z);
-	glUniform3f(glGetUniformLocation(_shaderProgram, "light.direction"), m_camFront.x, m_camFront.y, m_camFront.z);
-	glUniform1f(glGetUniformLocation(_shaderProgram, "light.cutOff"), glm::cos(glm::radians(12.5f)));
-	glUniform1f(glGetUniformLocation(_shaderProgram, "light.outerCutOff"), glm::cos(glm::radians(17.5f)));
-	glUniform3f(glGetUniformLocation(_shaderProgram, "light.ambient"), 0.2f, 0.2f, 0.2f);
-	glUniform3f(glGetUniformLocation(_shaderProgram, "light.diffuse"), 0.5f, 0.5f, 0.5f);
-	glUniform3f(glGetUniformLocation(_shaderProgram, "light.specular"), 1.0f, 1.0f, 1.0f);
-	glUniform1f(glGetUniformLocation(_shaderProgram, "light.constant"), 1.0f);
-	glUniform1f(glGetUniformLocation(_shaderProgram, "light.linear"), 0.09f);
-	glUniform1f(glGetUniformLocation(_shaderProgram, "light.quadratic"), 0.032f);
+	//glUniform3f(glGetUniformLocation(_shaderProgram, "light.position"), m_cameraPos.x, m_cameraPos.y, m_cameraPos.z);
+	//glUniform3f(glGetUniformLocation(_shaderProgram, "light.direction"), m_camFront.x, m_camFront.y, m_camFront.z);
+	//glUniform1f(glGetUniformLocation(_shaderProgram, "light.cutOff"), glm::cos(glm::radians(12.5f)));
+	//glUniform1f(glGetUniformLocation(_shaderProgram, "light.outerCutOff"), glm::cos(glm::radians(17.5f)));
+	//glUniform3f(glGetUniformLocation(_shaderProgram, "light.ambient"), 0.2f, 0.2f, 0.2f);
+	//glUniform3f(glGetUniformLocation(_shaderProgram, "light.diffuse"), 0.5f, 0.5f, 0.5f);
+	//glUniform3f(glGetUniformLocation(_shaderProgram, "light.specular"), 1.0f, 1.0f, 1.0f);
+	//glUniform1f(glGetUniformLocation(_shaderProgram, "light.constant"), 1.0f);
+	//glUniform1f(glGetUniformLocation(_shaderProgram, "light.linear"), 0.09f);
+	//glUniform1f(glGetUniformLocation(_shaderProgram, "light.quadratic"), 0.032f);
 
 	setVec3("dirLight.direction", 4.0f, 6.0f, 3.0f);
 	setVec3("dirLight.ambient", 0.05f, 0.05f, 0.05f);
@@ -318,9 +318,9 @@ void Material::Apply()
 	setVec3("flaslight.position", m_cameraPos.x, m_cameraPos.y, m_cameraPos.z);
 	setVec3("flashlight.direction", m_camFront.x, m_camFront.y, m_camFront.z);
 	setFloat("flashlight.cutOff", glm::cos(glm::radians(12.5f)));
-	setFloat("flashlight.outerCutOff", glm::cos(glm::radians(17.5f)));
-	setVec3("flashlight.ambient", 0.2f, 0.2f, 0.2f);
-	setVec3("flashlight.diffuse", 0.5f, 0.5f, 0.5f);
+	setFloat("flashlight.outerCutOff", glm::cos(glm::radians(15.0f)));
+	setVec3("flashlight.ambient", 0.0f, 0.0f, 0.0f);
+	setVec3("flashlight.diffuse", 1.0f, 1.0f, 1.0f);
 	setVec3("flashlight.specular", 1.0f, 1.0f, 1.0f);
 	setFloat("flashlight.constant", 1.0f);
 	setFloat("flashlight.linear", 0.09f);
