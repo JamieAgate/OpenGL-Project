@@ -5,6 +5,8 @@
 #include "Material.h"
 #include "Camera.h"
 #include "LightManager.h"
+#include "CollisionManager.h"
+#include "Ball.h"
 
 #include <string>
 #include <vector>
@@ -17,6 +19,7 @@ public:
 	~GameObjectManager();
 
 	void AddNewGameObject(std::string _name, GameObject* _object);
+	void AddNewGameObject(std::string _name, Ball* _object);
 	void RemoveGameObject(std::string _id);
 
 	void Update(float _deltaT);
@@ -26,5 +29,6 @@ private:
 	std::map<std::string, GameObject*> m_gameObjectVector;
 	Camera* m_cam;
 	LightManager* m_lightManager;
+	CollisionManager* m_CollisionManager;
 };
 #endif // !GAMEOBJECTMANAGER_H_

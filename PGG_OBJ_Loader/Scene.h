@@ -29,7 +29,7 @@ protected:
 	LightManager* m_lightManager;
 
 	Camera* m_cam;
-
+	int ballcount;
 	glm::mat4 _projMatrix;
 	glm::vec3 _lightPosition;
 };

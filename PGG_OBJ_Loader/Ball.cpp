@@ -2,11 +2,14 @@
 
 
 
-Ball::Ball(char* _objFile, char* _vertShader, char* _fragShader, char* _texture, char* _specMap, glm::vec3 _lightPos, glm::vec3 _scale, glm::vec3 _pos, Camera* _cam,InputManager* _input) :
+Ball::Ball(char* _objFile, char* _vertShader, char* _fragShader, char* _texture, char* _specMap, glm::vec3 _lightPos, glm::vec3 _scale, glm::vec3 _pos, Camera* _cam,InputManager* _input, glm::vec3 _initalVelocity, int _id) :
 	GameObject(_objFile,_vertShader,_fragShader,  _texture, _specMap, _lightPos, _scale, _pos, _cam)
 {
-	m_velocity = { 0.0f,0.0f,0.0f };
+	m_velocity.x = _initalVelocity.x/10;
+	m_velocity.y = _initalVelocity.y/10;
+	m_velocity.z = _initalVelocity.z/10;
 	m_input = _input;
+	id = _id;
 }
 
 
@@ -41,5 +44,17 @@ void Ball::CollisionCheck()
 	if (m_position.z <= -9 || m_position.z >= 7)
 	{
 		m_velocity.z *= -0.95f;
+	}
+}
+
+bool Ball::CheckIfAllreadyColided(int _id)
+{
+	if (!(std::find(ballsCollidedWithIds.begin(), ballsCollidedWithIds.end(), _id)!= ballsCollidedWithIds.end()))
+	{
+		return true;
+	}
+	else
+	{
+		return false;
 	}
 }
