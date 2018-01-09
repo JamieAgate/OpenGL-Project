@@ -330,9 +330,7 @@ void Material::Apply()
 	glUniform1i(_shaderTex1SamplerLocation,0);
 	glBindTexture(GL_TEXTURE_2D, _texture1);
 
-	glDepthMask(GL_FALSE);
 	glBindTexture(GL_TEXTURE_CUBE_MAP, _skyboxTex);
-	glDepthMask(GL_TRUE);
 
 	glActiveTexture(GL_TEXTURE1);
 	glUniform1i(_shaderSpecularLocation, 1);

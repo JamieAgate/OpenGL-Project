@@ -15,6 +15,8 @@ public:
 	bool WasKeyPressed(SDL_Scancode _key);
 	bool IsKeyDown(SDL_Scancode _key);
 	bool WasKeyReleased(SDL_Scancode _key);
+	bool WasLMBPressed();
+
 
 private:
 	int numKeys;

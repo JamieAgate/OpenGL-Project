@@ -44,3 +44,16 @@ bool InputManager::WasKeyReleased(SDL_Scancode _key)
 	if (!currentKeys[_key] && prevFrameKeys[_key]) { return true; }
 	else { return false; }
 }
+
+bool InputManager::WasLMBPressed()
+{
+	int mouseX, mouseY;
+	if (SDL_GetMouseState(&mouseX, &mouseY) && SDL_BUTTON(SDL_BUTTON_LEFT))
+	{
+		return true;
+	}
+	else
+	{
+		return false;
+	}
+}
