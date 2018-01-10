@@ -33,7 +33,7 @@ Scene::Scene()
 	GameObject* ground = new GameObject("Ground.obj", "VertShader.txt", "FragShader.txt", "grass.bmp", "grass.bmp", _lightPosition, glm::vec3{ 0.1f,0.1f,0.1f }, glm::vec3{ 0.0f,-1.05f,0.0f }, m_cam);
 	GameObject* box = new GameObject("box.obj", "VertShader.txt", "FragShader.txt", "boxtex.bmp", "specMap.bmp", _lightPosition, glm::vec3{ 0.05f,0.05f,0.05f }, glm::vec3{ 2.0f,0.0f, -11.0f }, m_cam);
 	Skybox* skybox = new Skybox("SkyboxVertShader.txt","SkyboxFragShader.txt","box.obj",m_cam);
-	Paralax* paralaxBox = new Paralax("box.obj", "ParalaxVertShader.txt", "ParalaxFragShader.txt", "Paralax//bricks.bmp", "Paralax//bricks.bmp", _lightPosition, glm::vec3{ 0.05f,0.05f,0.05f }, glm::vec3{ 0.0f,5.0f, 0.0f }, m_cam, "Paralax//bricks_normal.bmp", "Paralax//bricks_disp.bmp");
+	Paralax* paralaxBox = new Paralax("box.obj", "ParalaxVertShader.txt", "ParalaxFragShader.txt", "Paralax//bricks.bmp", "Paralax//bricks.bmp", _lightPosition, glm::vec3{ 0.05f,0.05f,0.05f }, glm::vec3{ 0.0f,1.0f, 0.0f }, m_cam, "Paralax//bricks_normal.bmp", "Paralax//bricks_disp.bmp");
 
 	m_gameObjManager = new GameObjectManager(m_cam, m_lightManager);
 	m_gameObjManager->AddNewGameObject("Chair", chair);
