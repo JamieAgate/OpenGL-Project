@@ -253,31 +253,22 @@ void Material::SetMatrices(glm::mat4 modelMatrix, glm::mat4 invModelMatrix, glm:
 	
 void Material::Apply()
 {
-	glUseProgram( _shaderProgram );
+	glUseProgram(_shaderProgram);
 
 	glUniform3fv( _shaderEmissiveColLocation, 1, glm::value_ptr(_emissiveColour) );
 	glUniform3fv( _shaderDiffuseColLocation, 1, glm::value_ptr(_diffuseColour) );
 	glUniform3fv( _shaderSpecularColLocation, 1, glm::value_ptr(_specularColour) );
 	
 	glUniform3f(glGetUniformLocation(_shaderProgram,"cameraPos"),m_cameraPos.x,m_cameraPos.y,m_cameraPos.z);
+	glUniform3f(glGetUniformLocation(_shaderProgram, "viewPos"), m_cameraPos.x, m_cameraPos.y, m_cameraPos.z);
 
 	glUniform3f(glGetUniformLocation(_shaderProgram, "material.ambient"), 1.0f, 0.5f, 0.31f);
 	glUniform3f(glGetUniformLocation(_shaderProgram, "material.diffuse"), 1.0f, 0.5f, 0.31f);
 	glUniform3f(glGetUniformLocation(_shaderProgram, "material.specular"), 0.5f, 0.5f, 0.5f);
 	glUniform1f(glGetUniformLocation(_shaderProgram, "material.shininess"), 32.0f);
 
-	//glUniform3f(glGetUniformLocation(_shaderProgram, "light.position"), m_cameraPos.x, m_cameraPos.y, m_cameraPos.z);
-	//glUniform3f(glGetUniformLocation(_shaderProgram, "light.direction"), m_camFront.x, m_camFront.y, m_camFront.z);
-	//glUniform1f(glGetUniformLocation(_shaderProgram, "light.cutOff"), glm::cos(glm::radians(12.5f)));
-	//glUniform1f(glGetUniformLocation(_shaderProgram, "light.outerCutOff"), glm::cos(glm::radians(17.5f)));
-	//glUniform3f(glGetUniformLocation(_shaderProgram, "light.ambient"), 0.2f, 0.2f, 0.2f);
-	//glUniform3f(glGetUniformLocation(_shaderProgram, "light.diffuse"), 0.5f, 0.5f, 0.5f);
-	//glUniform3f(glGetUniformLocation(_shaderProgram, "light.specular"), 1.0f, 1.0f, 1.0f);
-	//glUniform1f(glGetUniformLocation(_shaderProgram, "light.constant"), 1.0f);
-	//glUniform1f(glGetUniformLocation(_shaderProgram, "light.linear"), 0.09f);
-	//glUniform1f(glGetUniformLocation(_shaderProgram, "light.quadratic"), 0.032f);
-
 	setVec3("dirLight.direction", 4.0f, 6.0f, 3.0f);
+	setVec3("lightPos", 4.0f, 6.0f, 3.0f);
 	setVec3("dirLight.ambient", 0.05f, 0.05f, 0.05f);
 	setVec3("dirLight.diffuse", 0.4f, 0.4f, 0.4f);
 	setVec3("dirLight.specular", 0.5f, 0.5f, 0.5f);

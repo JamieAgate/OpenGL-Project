@@ -25,10 +25,7 @@ void GameObjectManager::AddNewGameObject(std::string _name,GameObject* _object)
 void GameObjectManager::AddNewGameObject(std::string _name, Ball* _object)
 {
 	m_gameObjectVector.insert(std::pair<std::string, GameObject*>(_name, _object));
-	if (_name.find("Ball") != std::string::npos)
-	{
-		m_CollisionManager->AddBallToVector(_object);
-	}
+	m_CollisionManager->AddBallToVector(_object);
 }
 
 void GameObjectManager::RemoveGameObject(std::string _id)

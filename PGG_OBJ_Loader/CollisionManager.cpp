@@ -34,7 +34,7 @@ void CollisionManager::CheckBallCollision()
 				if ((xAxisColl * xAxisColl)  +
 					(yAxisColl * yAxisColl)  +
 					(zAxisColl * zAxisColl)  <
-					(0.1f) && currentTestedBall->CheckIfAllreadyColided(collidedBall->GetId()))
+					(0.2f) && currentTestedBall->CheckIfAllreadyColided(collidedBall->GetId()))
 				{
 						CollideBalls(currentTestedBall, collidedBall);
 				}
@@ -54,8 +54,24 @@ void CollisionManager::CollideBalls(Ball* _ball1, Ball* _ball2)
 	_ball1->AddCollidedWithId(_ball2->GetId());
 	_ball2->AddCollidedWithId(_ball1->GetId());
 
-	glm::vec3 tempVelocity = _ball1->GetVelocity();
+	glm::vec3 normal = _ball1->GetPos() - _ball2->GetPos();
 
-	_ball1->SetVelocity(_ball2->GetVelocity());
-	_ball2->SetVelocity(tempVelocity);
+	float ball1ReflectAngle = glm::orientedAngle(_ball1->GetVelocity(), normal, normal);
+	float ball2ReflectAngle = glm::orientedAngle(_ball2->GetVelocity(), normal, normal);
+
+	glm::vec3 reflectedBall1Vec = glm::rotate(_ball1->GetVelocity(), ball1ReflectAngle, normal);
+	glm::vec3 reflectedBall2Vec = glm::rotate(_ball2->GetVelocity(), ball2ReflectAngle, normal);
+
+	glm::vec3 tempVel = _ball1->GetVelocity();
+	tempVel.x *= 0.33;
+	tempVel.y *= 0.33;
+	tempVel.z *= 0.33;
+
+	glm::vec3 tempVel2 = _ball2->GetVelocity();
+	tempVel2.x *= 0.33;
+	tempVel2.y *= 0.33;
+	tempVel2.z *= 0.33;
+
+	_ball1->SetVelocity(reflectedBall1Vec + tempVel2);
+	_ball2->SetVelocity(reflectedBall2Vec + tempVel);
 }

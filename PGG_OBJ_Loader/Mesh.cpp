@@ -24,60 +24,62 @@ Mesh::~Mesh()
 	glDeleteVertexArrays( 1, &_VAO );
 }
 
-void Mesh::LoadOBJ( std::string filename )
+void Mesh::LoadOBJ( std::string filename, bool _paralax)
 {
 	// Find file
 	std::ifstream inputFile( filename );
 
-	if( inputFile.is_open() )
+	if (inputFile.is_open())
 	{
 		// OBJ files can store texture coordinates, positions and normals
 		std::vector<glm::vec2> rawUVData;
 		std::vector<glm::vec3> rawPositionData;
 		std::vector<glm::vec3> rawNormalData;
-		
+
 		std::vector<glm::vec2> orderedUVData;
 		std::vector<glm::vec3> orderedPositionData;
 		std::vector<glm::vec3> orderedNormalData;
+		std::vector<glm::vec3> tangentData;
+		std::vector<glm::vec3> biTangentData;
 
 		std::string currentLine;
 
-		while( std::getline( inputFile, currentLine ) )
+		while (std::getline(inputFile, currentLine))
 		{
 			std::stringstream currentLineStream(currentLine);
 			//std::cout<< currentLine <<std::endl;
-			
-			if( !currentLine.substr(0,2).compare( 0, 2, "vt") )
+
+			if (!currentLine.substr(0, 2).compare(0, 2, "vt"))
 			{
 				std::string junk;
 				float x, y;
 				currentLineStream >> junk >> x >> y;
-				rawUVData.push_back(glm::vec2(x,y));
+				rawUVData.push_back(glm::vec2(x, y));
 			}
-			else if( !currentLine.substr(0,2).compare( 0, 2, "vn") )
+			else if (!currentLine.substr(0, 2).compare(0, 2, "vn"))
 			{
 				std::string junk;
 				float x, y, z;
 				currentLineStream >> junk >> x >> y >> z;
-				rawNormalData.push_back(glm::vec3(x,y,z));
+				rawNormalData.push_back(glm::vec3(x, y, z));
 			}
-			else if( !currentLine.substr(0,2).compare( 0, 1, "v") )
+			else if (!currentLine.substr(0, 2).compare(0, 1, "v"))
 			{
 				std::string junk;
 				float x, y, z;
 				currentLineStream >> junk >> x >> y >> z;
-				rawPositionData.push_back(glm::vec3(x,y,z));
+				rawPositionData.push_back(glm::vec3(x, y, z));
 			}
-			else if( !currentLine.substr(0,2).compare( 0, 1,"f") )
+			else if (!currentLine.substr(0, 2).compare(0, 1, "f"))
 			{
 				std::string junk;
 				std::string verts[4];
 
 				currentLineStream >> junk >> verts[0] >> verts[1] >> verts[2] >> verts[3];
 				//tris
-				if( verts[3].empty() || verts[3] == "")
+				if (verts[3].empty() || verts[3] == "")
 				{
-					for( unsigned int i = 0; i < 3; i++ )
+					for (unsigned int i = 0; i < 3; i++)
 					{
 						std::stringstream currentSection(verts[i]);
 
@@ -86,12 +88,12 @@ void Mesh::LoadOBJ( std::string filename )
 						unsigned int uvID = 0;
 						unsigned int normID = 0;
 
-						if( verts[i].find('/') == std::string::npos )
+						if (verts[i].find('/') == std::string::npos)
 						{
 							// No texcoords or normals
 							currentSection >> posID;
 						}
-						else if( verts[i].find("//") != std::string::npos )
+						else if (verts[i].find("//") != std::string::npos)
 						{
 							// No texcoords
 							char junk;
@@ -100,20 +102,20 @@ void Mesh::LoadOBJ( std::string filename )
 						else
 						{
 							char junk;
-							currentSection >> posID >>junk >> uvID >> junk >> normID;
+							currentSection >> posID >> junk >> uvID >> junk >> normID;
 						}
 
-						if( posID > 0 )
+						if (posID > 0)
 						{
-							orderedPositionData.push_back( rawPositionData[posID-1] );
+							orderedPositionData.push_back(rawPositionData[posID - 1]);
 						}
-						if( uvID > 0 )
+						if (uvID > 0)
 						{
-							orderedUVData.push_back( rawUVData[uvID-1] );
+							orderedUVData.push_back(rawUVData[uvID - 1]);
 						}
-						if( normID > 0 )
+						if (normID > 0)
 						{
-							orderedNormalData.push_back( rawNormalData[normID-1] );
+							orderedNormalData.push_back(rawNormalData[normID - 1]);
 						}
 
 					}
@@ -208,6 +210,45 @@ void Mesh::LoadOBJ( std::string filename )
 			}
 		}
 
+		
+			for (int i = 0; i < orderedPositionData.size(); i++)
+			{
+				glm::vec3 v0 = orderedPositionData.at(i);
+				glm::vec3 v1 = orderedPositionData.at((i + 1)%8);
+				glm::vec3 v2 = orderedPositionData.at((i + 2)%8);
+				
+				glm::vec2 uv0 = orderedUVData.at(i);
+				glm::vec2 uv1 = orderedUVData.at((i + 1)%8);
+				glm::vec2 uv2 = orderedUVData.at((i + 2)%8);
+
+				glm::vec3 deltaPos1 = v1 - v0;
+				glm::vec3 deltaPos2 = v2 - v0;
+
+				glm::vec2 deltaUV1 = uv1 - uv0;
+				glm::vec2 deltaUV2 = uv2 - uv0;
+
+				float f = 1.0f / (deltaUV1.x * deltaUV2.y - deltaUV2.x * deltaUV1.y);
+
+				glm::vec3 tangent;
+				glm::vec3 bitangent;
+
+				tangent.x = f * (deltaUV2.y * deltaPos1.x - deltaUV1.y * deltaPos2.x);
+				tangent.y = f * (deltaUV2.y * deltaPos1.y - deltaUV1.y * deltaPos2.y);
+				tangent.z = f * (deltaUV2.y * deltaPos1.z - deltaUV1.y * deltaPos2.z);
+				tangent = glm::normalize(tangent);
+				tangentData.push_back(tangent);
+				tangentData.push_back(tangent);
+				tangentData.push_back(tangent);
+
+				bitangent.x = f * (-deltaUV2.x * deltaPos1.x + deltaUV1.x * deltaPos2.x);
+				bitangent.y = f * (-deltaUV2.x * deltaPos1.y + deltaUV1.x * deltaPos2.y);
+				bitangent.z = f * (-deltaUV2.x * deltaPos1.z + deltaUV1.x * deltaPos2.z);
+				bitangent = glm::normalize(bitangent);
+				biTangentData.push_back(bitangent);
+				biTangentData.push_back(bitangent);
+				biTangentData.push_back(bitangent);
+			}
+
 		inputFile.close();
 
 		_numVertices = orderedPositionData.size();
@@ -271,7 +312,32 @@ void Mesh::LoadOBJ( std::string filename )
 				glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 0, 0 );
 				glEnableVertexAttribArray(2);
 			}
-	
+
+			if (_paralax)
+			{
+				GLuint tangentBuffer = 0;
+
+				glGenBuffers(1, &tangentBuffer);
+
+				glBindBuffer(GL_ARRAY_BUFFER, tangentBuffer);
+
+				glBufferData(GL_ARRAY_BUFFER, sizeof(float) * _numVertices * 3, &tangentData[0], GL_STATIC_DRAW);
+
+				glVertexAttribPointer(3, 3, GL_FLOAT, GL_FALSE, 0, 0);
+				glEnableVertexAttribArray(3);
+
+
+				GLuint biTangentBuffer = 0;
+
+				glGenBuffers(1, &biTangentBuffer);
+
+				glBindBuffer(GL_ARRAY_BUFFER, biTangentBuffer);
+
+				glBufferData(GL_ARRAY_BUFFER, sizeof(float) * _numVertices * 3, &biTangentData[0], GL_STATIC_DRAW);
+
+				glVertexAttribPointer(4, 3, GL_FLOAT, GL_FALSE, 0, 0);
+				glEnableVertexAttribArray(4);
+			}
 		}
 	}
 	else

@@ -1,4 +1,5 @@
 #include <vector>
+#include <GLM\gtx\vector_angle.hpp>
 #include <cmath>
 
 #include "Ball.h"

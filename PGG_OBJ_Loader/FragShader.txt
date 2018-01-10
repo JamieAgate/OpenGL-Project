@@ -1,5 +1,4 @@
 #version 430 core
-
 // Input per-fragment data
 // These must correspond to the varying outputs from the vertex shader
 in vec3 vNormalV;
@@ -8,19 +7,10 @@ in vec3 eyeSpaceVertPosV;
 in vec2 texCoord;
 in vec3 fragPos;
 
-// Input uniform data - these have values that will be the same for every fragment
-uniform vec3 lightColour = {1.0,1.0,1.0};
-uniform vec3 emissiveColour = {0,0,0};
-uniform vec3 ambientColour  = {1.0f,1.0f,1.0f};
-uniform vec3 diffuseColour  = {1.0f,1.0f,1.0f};
-uniform vec3 specularColour = {1.0f,1.0f,1.0f};
-uniform float shininess     = 50.0f;
-uniform float alpha         = 1.0f;
-uniform vec3 worldLightPos;
-uniform vec3 cameraPos;
-
-// The output of the fragment shader is the fragment's colour
 out vec4 fragColour;
+
+// Input uniform data - these have values that will be the same for every fragment
+uniform vec3 cameraPos;
 
 // This is another input to allow us to access a texture
 

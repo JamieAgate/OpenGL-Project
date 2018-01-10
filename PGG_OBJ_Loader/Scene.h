@@ -7,6 +7,7 @@
 #include "LightManager.h"
 #include "Skybox.h"
 #include "Ball.h"
+#include "Paralax.h"
 
 #include <GLM/glm.hpp> // This is the main GLM header
 #include <GLM/gtc/matrix_transform.hpp> // This one lets us use matrix transformations

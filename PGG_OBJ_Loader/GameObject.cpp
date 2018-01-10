@@ -13,9 +13,13 @@ GameObject::GameObject(char* _objFile, char* _vertShader, char* _fragShader, cha
 	{
 		modelMaterial->SetSpecular(_specMap);
 	}
-
+	bool paralax = false;
+	if (_vertShader == "ParalaxVertShader.txt")
+	{
+		paralax = true;
+	}
 	Mesh *modelMesh = new Mesh();
-	modelMesh->LoadOBJ(_objFile);
+	modelMesh->LoadOBJ(_objFile,paralax);
 
 	_material = modelMaterial;
 	_mesh = modelMesh;
@@ -79,7 +83,7 @@ GameObject::GameObject(char* _vertShader, char* _fragShader, char* _obj, Camera*
 
 	modelMesh->CreateMesh(skyboxVertices);
 
-	m_scale = { 2.0f,2.0f,2.0f };
+	m_scale = { 3.0f,3.0f,3.0f };
 
 	_material = modelMaterial;
 	_mesh = modelMesh;
@@ -116,7 +120,10 @@ void GameObject::Draw(glm::mat4 viewMatrix, glm::mat4 projMatrix)
 			// Make sure matrices are up to date (if you don't change them elsewhere, you can put this in the update function)
 			glm::mat4 transformMat = glm::translate(glm::mat4(1.0f), m_position );
 			glm::mat4 scaleMat = glm::scale(glm::mat4(1.0f), m_scale);
-			_modelMatrix = transformMat * scaleMat;
+			glm::mat4 rotationMat = glm::rotate(glm::mat4(1.0f), _rotation.x,glm::vec3(1.0f,0.0f,0.0f));
+			rotationMat = glm::rotate(rotationMat, _rotation.y, glm::vec3(0.0f, 1.0f, 0.0f));
+			rotationMat = glm::rotate(rotationMat, _rotation.z, glm::vec3(0.0f, 0.0f, 1.0f));
+			_modelMatrix = transformMat * scaleMat * rotationMat;
 
 			_material->SetMatrices(_modelMatrix, _invModelMatrix, viewMatrix, projMatrix);
 			// This activates the shader

@@ -20,6 +20,8 @@ public:
 	// For setting the standard matrices needed by the shader
 	void SetMatrices(glm::mat4 modelMatrix, glm::mat4 invModelMatrix, glm::mat4 viewMatrix, glm::mat4 projMatrix);
 	
+	int GetShaderProgram() { return _shaderProgram; }
+
 	// For setting material properties
 	void SetEmissiveColour( glm::vec3 input ) { _emissiveColour = input;}
 	void SetDiffuseColour( glm::vec3 input ) { _diffuseColour = input;}

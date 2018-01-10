@@ -36,7 +36,7 @@ public:
 	virtual void Update( float deltaTs );
 
 	// Need to give it the camera's orientation and projection
-	void Draw(glm::mat4 viewMatrix, glm::mat4 projMatrix);
+	virtual void Draw(glm::mat4 viewMatrix, glm::mat4 projMatrix);
 
 protected:
 	Camera* cam;

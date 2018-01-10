@@ -16,7 +16,7 @@ public:
 	~Mesh();
 	
 	// OBJ file must be triangulated
-	void LoadOBJ( std::string filename );
+	void LoadOBJ( std::string filename, bool _paralax );
 	void CreateMesh(float verticies[]);
 
 	// Draws the mesh - must have shaders applied for this to display!

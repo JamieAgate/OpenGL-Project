@@ -8,7 +8,6 @@ layout(location = 2) in vec2 vTexCoordIn;
 uniform mat4 modelMat;
 uniform mat4 viewMat;
 uniform mat4 projMat;
-
 uniform vec3 worldSpaceLightPos;
 
 // These per-vertex outputs must correspond to the per-fragment inputs in the fragment shader

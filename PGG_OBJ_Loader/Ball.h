@@ -13,7 +13,7 @@ public:
 	glm::vec3 GetVelocity() { return m_velocity; }
 	int GetId() { return id; }
 
-	void SetVelocity(glm::vec3 _vel) { m_velocity.x += _vel.x * 0.5; m_velocity.y += _vel.y * 0.5; m_velocity.z += _vel.z * 0.5;}
+	void SetVelocity(glm::vec3 _vel) { m_velocity.x = _vel.x; m_velocity.y = _vel.y; m_velocity.z = _vel.z;}
 
 	void CollisionCheck(); 
 	void AddCollidedWithId(int _id) { ballsCollidedWithIds.push_back(_id);}

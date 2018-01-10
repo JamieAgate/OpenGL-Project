@@ -20,14 +20,16 @@ Ball::~Ball()
 
 void Ball::Update(float deltaTs)
 {
+	_material->SetCameraPos(cam->GetCamPos());
+	_material->SetCamFront(cam->GetCamFront());
 	m_velocity += m_gravity;
-	CollisionCheck();
 	if (m_input->WasLMBPressed())
 	{
-		m_velocity.x += cam->GetCamFront().x / 75;
-		m_velocity.y += cam->GetCamFront().y / 75;
-		m_velocity.z += cam->GetCamFront().z / 75;
+		m_velocity.x += cam->GetCamFront().x / 50;
+		m_velocity.y += cam->GetCamFront().y / 50;
+		m_velocity.z += cam->GetCamFront().z / 50;
 	}
+	CollisionCheck();
 	m_position += m_velocity;
 }
 
@@ -35,15 +37,34 @@ void Ball::CollisionCheck()
 {
 	if (m_position.y <= 0.1f)
 	{
-		m_velocity.y *= -0.95f;
+		m_position.y = 0.1f;
+		m_velocity.y *= -0.9f;
 	}
-	if (m_position.x <= -13 || m_position.x >= 13)
+	if (m_position.x <= -14.0f || m_position.x >= 14.0f)
 	{
-		m_velocity.x *= -0.95f;
+		m_velocity.x *= -0.9f;
 	}
-	if (m_position.z <= -9 || m_position.z >= 7)
+	if (m_position.z <= -7.0f || m_position.z >= 7.0f)
 	{
-		m_velocity.z *= -0.95f;
+		m_velocity.z *= -0.9f;
+	}
+
+	if (m_velocity.x > 5.0f)
+	{
+		m_velocity.x = 5.0f;
+	}
+	if (m_velocity.x < -5.0f)
+	{
+		m_velocity.x = -5.0f;
+	}
+
+	if (m_velocity.z > 5.0f)
+	{
+		m_velocity.z = 5.0f;
+	}
+	if (m_velocity.z < -5.0f)
+	{
+		m_velocity.z = -5.0f;
 	}
 }
 
@@ -51,6 +72,7 @@ bool Ball::CheckIfAllreadyColided(int _id)
 {
 	if (!(std::find(ballsCollidedWithIds.begin(), ballsCollidedWithIds.end(), _id)!= ballsCollidedWithIds.end()))
 	{
+		ballsCollidedWithIds.push_back(_id);
 		return true;
 	}
 	else
