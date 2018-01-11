@@ -1,41 +1,42 @@
+///  @file GameObject.cpp
+///  @brief Base class for all game objects
 
-#include <GLM/gtc/type_ptr.hpp>
-#include <GLM/gtc/matrix_transform.hpp>
 #include "GameObject.h"
 
 GameObject::GameObject(char* _objFile, char* _vertShader, char* _fragShader, char* _texture,char* _specMap, glm::vec3 _lightPos, glm::vec3 _scale, glm::vec3 _pos, Camera* _cam)
 {
-	Material *modelMaterial = new Material();
-	modelMaterial->LoadShaders(_vertShader, _fragShader);
-	modelMaterial->SetDiffuseColour(glm::vec3(1.0f, 1.0f, 1.0f));
-	modelMaterial->SetTexture(_texture);
-	if (_specMap != "")
+	Material *modelMaterial = new Material();//ceates a new material
+	modelMaterial->LoadShaders(_vertShader, _fragShader);//gives it the frag/vert shaders
+	modelMaterial->SetDiffuseColour(glm::vec3(1.0f, 1.0f, 1.0f));//sets the diffuse colour to be white
+	modelMaterial->SetTexture(_texture);//sets texture
+	if (_specMap != "")//if it has a specular map
 	{
-		modelMaterial->SetSpecular(_specMap);
+		modelMaterial->SetSpecular(_specMap);//set the specualr map
 	}
 	bool paralax = false;
-	if (_vertShader == "ParalaxVertShader.txt")
+	if (_vertShader == "ParalaxVertShader.txt")//if the vertex shader is a paralax
 	{
 		paralax = true;
 	}
-	Mesh *modelMesh = new Mesh();
-	modelMesh->LoadOBJ(_objFile,paralax);
+	Mesh *modelMesh = new Mesh();//creates new mesh
+	modelMesh->LoadOBJ(_objFile,paralax);//gives it the obj and tells it if it is using paralax
 
-	_material = modelMaterial;
-	_mesh = modelMesh;
-	m_scale = _scale;
-	m_position = _pos;
-	cam = _cam;
+	m_material = modelMaterial;//sets the material
+	m_mesh = modelMesh;//sets the mesh
+	m_scale = _scale;//sets scale
+	m_position = _pos;//sets position
+	m_cam = _cam;//sets the camera
 }
 
 GameObject::GameObject(char* _vertShader, char* _fragShader, char* _obj, Camera* _cam)
 {
-	Material *modelMaterial = new Material();
-	modelMaterial->LoadShaders(_vertShader, _fragShader);
-	modelMaterial->SetDiffuseColour(glm::vec3(1.0f, 1.0f, 1.0f));
+	Material *modelMaterial = new Material();//creates new material
+	modelMaterial->LoadShaders(_vertShader, _fragShader);//gives it the frag/vert shaders
+	modelMaterial->SetDiffuseColour(glm::vec3(1.0f, 1.0f, 1.0f));//sets the diffuse colour
 
-	Mesh *modelMesh = new Mesh();
+	Mesh *modelMesh = new Mesh();//creates a new mesh
 
+	//skybox verticies,normals and uvs
 	float skyboxVertices[] = {
 		// positions          
 		-50.0f,  50.0f, -50.0f,
@@ -81,30 +82,29 @@ GameObject::GameObject(char* _vertShader, char* _fragShader, char* _obj, Camera*
 		50.0f, -50.0f,  50.0f
 	};
 
+	//creates mesh from verticies
 	modelMesh->CreateMesh(skyboxVertices);
 
-	m_scale = { 3.0f,3.0f,3.0f };
 
-	_material = modelMaterial;
-	_mesh = modelMesh;
-	cam = _cam;
+	m_material = modelMaterial;//sets material
+	m_mesh = modelMesh;//sets mesh
+	m_cam = _cam;//sets camera
 	m_position = { 0.0f,0.0f,0.0f };
+	m_scale = { 3.0f,3.0f,3.0f };//sets scale
 }
 
 GameObject::~GameObject()
 {
-	delete _mesh;
-	delete _material;
+	delete m_mesh;//deletes mesh
+	delete m_material;//deletes material
 }
 
 void GameObject::Update( float deltaTs )
 {
-	if (cam != nullptr)
+	if (m_cam != nullptr)
 	{
-		_material->SetCameraPos(cam->GetCamPos());
-		_material->SetCamFront(cam->GetCamFront());
-
-		//std::cout << cam->GetCamFront().x << ", " << cam->GetCamFront().y << ", " << cam->GetCamFront().z << "\n";
+		m_material->SetCameraPos(m_cam->GetCamPos());//sets the view position
+		m_material->SetCamFront(m_cam->GetCamFront());//sets the view direction
 	}
 }
 
@@ -112,26 +112,26 @@ void GameObject::Update( float deltaTs )
 
 void GameObject::Draw(glm::mat4 viewMatrix, glm::mat4 projMatrix)
 {
-	if( _mesh != NULL )
+	if( m_mesh != NULL )
 	{
-		if( _material != NULL )
+		if( m_material != NULL )
 		{
 			
 			// Make sure matrices are up to date (if you don't change them elsewhere, you can put this in the update function)
 			glm::mat4 transformMat = glm::translate(glm::mat4(1.0f), m_position );
 			glm::mat4 scaleMat = glm::scale(glm::mat4(1.0f), m_scale);
-			glm::mat4 rotationMat = glm::rotate(glm::mat4(1.0f), _rotation.x,glm::vec3(1.0f,0.0f,0.0f));
-			rotationMat = glm::rotate(rotationMat, _rotation.y, glm::vec3(0.0f, 1.0f, 0.0f));
-			rotationMat = glm::rotate(rotationMat, _rotation.z, glm::vec3(0.0f, 0.0f, 1.0f));
-			_modelMatrix = transformMat * scaleMat * rotationMat;
+			glm::mat4 rotationMat = glm::rotate(glm::mat4(1.0f), m_rotation.x,glm::vec3(1.0f,0.0f,0.0f));
+			rotationMat = glm::rotate(rotationMat, m_rotation.y, glm::vec3(0.0f, 1.0f, 0.0f));
+			rotationMat = glm::rotate(rotationMat, m_rotation.z, glm::vec3(0.0f, 0.0f, 1.0f));
+			m_modelMatrix = transformMat * scaleMat * rotationMat;
 
-			_material->SetMatrices(_modelMatrix, _invModelMatrix, viewMatrix, projMatrix);
+			m_material->SetMatrices(m_modelMatrix, m_invModelMatrix, viewMatrix, projMatrix);
 			// This activates the shader
-			_material->Apply();
+			m_material->Apply();
 		}
 
 		// Sends the mesh data down the pipeline
-		_mesh->Draw();
+		m_mesh->Draw();
 
 	}
 }

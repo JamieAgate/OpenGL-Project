@@ -1,12 +1,13 @@
+///  @file Light.cpp
+///  @brief Point light code
+
 #include "Light.h"
-
-
 
 Light::Light(char* _objFile, char* _vertShader, char* _fragShader, char* _texture, glm::vec3 _lightPos, glm::vec3 _scale, glm::vec3 _pos, InputManager* _input)
 	: GameObject(_objFile,_vertShader,_fragShader,_texture,"" ,_lightPos,_scale, _pos,nullptr)
 {
-	m_input = _input;
-	m_lightPos = _lightPos;
+	m_input = _input;//sets input manager
+	m_lightPos = _lightPos;//sets lights position
 }
 
 
@@ -17,6 +18,7 @@ Light::~Light()
 
 void Light::Update(float _deltaT)
 {
+	//moves light
 	float lightSpeed = 2.5f * _deltaT;
 	if (m_input->IsKeyDown(SDL_SCANCODE_UP))
 	{

@@ -103,7 +103,9 @@ void main()
 {           
     // offset texture coordinates with Parallax Mapping
     vec3 viewDir   = normalize(fs_in.TangentViewPos - fs_in.TangentFragPos);
-    vec2 texCoords = ParallaxMapping(fs_in.TexCoords,  viewDir);
+	vec2 texCoords = fs_in.TexCoords;
+
+    texCoords = ParallaxMapping(fs_in.TexCoords,  viewDir);
 	if(texCoords.x > 1.0 || texCoords.y > 1.0 || texCoords.x < 0.0 || texCoords.y < 0.0)
 	{
         discard;
@@ -114,32 +116,19 @@ void main()
     vec3 normal  = texture(normalMap, texCoords).rgb;
     normal = normalize(normal * 2.0 - 1.0);
 
-	   vec3 ambient = 0.1 * colour;
-    // diffuse
-    vec3 lightDir = normalize(fs_in.TangentLightPos - fs_in.TangentFragPos);
-    float diff = max(dot(lightDir, normal), 0.0);
-    vec3 diffuse = diff * colour;
-    // specular    
-    vec3 reflectDir = reflect(-lightDir, normal);
-    vec3 halfwayDir = normalize(lightDir + viewDir);  
-    float spec = pow(max(dot(normal, halfwayDir), 0.0), 32.0);
-
-    vec3 specular = vec3(0.2) * spec;
-    FragColour = vec4(ambient + diffuse + specular, 1.0);
-	
     // proceed with lighting code
-	//vec3 result = {0.0f,0.0f,0.0f};
+	vec3 result = {0.0f,0.0f,0.0f};
 	
-	//result += calcDirLight(dirlight,normal,viewDir,colour);
+	result += calcDirLight(dirlight,normal,viewDir,colour);
 	
-	//for(int i = 0; i < NR_POINT_LIGHTS; i++)
-	//{
-	//	result += calcPointLights(pointLights[i],normal,fs_in.FragPos,viewDir,colour);
-	//}
+	for(int i = 0; i < NR_POINT_LIGHTS; i++)
+	{
+		result += calcPointLights(pointLights[i],normal,fs_in.FragPos,viewDir,colour);
+	}
 	
-	//result += calcSpotLight(flashlight,normal,fs_in.FragPos,viewDir,colour);
+	result += calcSpotLight(flashlight,normal,fs_in.FragPos,viewDir,colour);
 	
-	//FragColour = vec4(result,1.0);
+	FragColour = vec4(result,1.0);
 }
 
 vec3 calcDirLight(DirLight light, vec3 normal, vec3 viewDir,vec3 diffuseParalax)

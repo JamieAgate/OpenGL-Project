@@ -6,8 +6,8 @@
 
 bool InitGL()
 {
+	//initialises open gl
 	glewExperimental = GL_TRUE;
-
 	GLenum err = glewInit();
 	if( GLEW_OK != err )
 	{
@@ -27,6 +27,7 @@ bool InitGL()
 
 int main(int argc, char *argv[])
 {
+	//initialise SDL
 	if (SDL_Init(SDL_INIT_VIDEO) < 0)
 	{
 		std::cout << "Whoops! Something went very wrong, cannot initialise SDL :(" << std::endl;
@@ -54,16 +55,15 @@ int main(int argc, char *argv[])
 	}
 
 	unsigned int lastTime = SDL_GetTicks();
-	glEnable(GL_DEPTH_TEST);
 
-	Scene myScene;
+	Scene myScene;//creates new scene
 
-	bool cmdRotateLeft = false, cmdRotateRight = false, cmdRotateUp = false, cmdRotateDown = false;
-
+	//Game Loop
 	bool go = true;
 	while (go)
 	{
 		SDL_Event incomingEvent;
+		//if window is closed
 		while (SDL_PollEvent(&incomingEvent))
 		{
 			switch (incomingEvent.type)
@@ -73,22 +73,25 @@ int main(int argc, char *argv[])
 				break;
 			}
 		}
-			unsigned int current = SDL_GetTicks();
-			float deltaTs = (float)(current - lastTime) / 1000.0f;
-			myScene.Update(deltaTs);
 
-			glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
-			glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-			myScene.Draw();
+		unsigned int current = SDL_GetTicks();//gets current ticks
+		float deltaTs = (float)(current - lastTime) / 1000.0f;//measures the change it ticks
+		myScene.Update(deltaTs);//updates scene
 
-			SDL_GL_SwapWindow(window);
+		glClearColor(0.0f, 0.0f, 0.0f, 0.0f);//clears renderer
+		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+		myScene.Draw();//draws scene
 
-			if (deltaTs < (1.0f / 50.0f))
-			{
-				SDL_Delay((unsigned int)(((1.0f / 50.0f) - deltaTs)*1000.0f));
-			}
-			lastTime = current;
+		SDL_GL_SwapWindow(window);//presents scene
+
+		//caps framerate
+		if (deltaTs < (1.0f / 50.0f))
+		{
+			SDL_Delay((unsigned int)(((1.0f / 50.0f) - deltaTs)*1000.0f));
+		}
+		lastTime = current;
 	}
+	//quits SDL
 	SDL_GL_DeleteContext(glcontext);
 	SDL_DestroyWindow(window);
 	SDL_Quit();

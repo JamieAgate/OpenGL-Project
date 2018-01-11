@@ -1,27 +1,24 @@
+///  @file Mesh.cpp
+///  @brief Code that creates and stores the VAO and allows model loading
 
 #include "Mesh.h"
-#include <fstream>
-#include <iostream>
-#include <sstream>
-#include <vector>
-
 
 Mesh::Mesh()
 {
 	// Initialise stuff here
 
-	_VAO = 0;
+	m_VAO = 0;
 		// Creates one VAO
-	glGenVertexArrays( 1, &_VAO );
+	glGenVertexArrays( 1, &m_VAO );
 
-	_numVertices = 0;
+	m_numVertices = 0;
 	
 }
 
 Mesh::~Mesh()
 {
 	// Clean up stuff here
-	glDeleteVertexArrays( 1, &_VAO );
+	glDeleteVertexArrays( 1, &m_VAO );
 }
 
 void Mesh::LoadOBJ( std::string filename, bool _paralax)
@@ -209,54 +206,55 @@ void Mesh::LoadOBJ( std::string filename, bool _paralax)
 
 			}
 		}
-
 		
-			for (int i = 0; i < orderedPositionData.size(); i++)
-			{
-				glm::vec3 v0 = orderedPositionData.at(i);
-				glm::vec3 v1 = orderedPositionData.at((i + 1)%8);
-				glm::vec3 v2 = orderedPositionData.at((i + 2)%8);
+		//creates the tangents and bitangents for paralax mapping
+		for (int i = 0; i < orderedPositionData.size(); i++)
+		{
+			glm::vec3 v0 = orderedPositionData.at(i);
+			glm::vec3 v1 = orderedPositionData.at((i + 1)% orderedPositionData.size());
+			glm::vec3 v2 = orderedPositionData.at((i + 2) % orderedPositionData.size());
 				
-				glm::vec2 uv0 = orderedUVData.at(i);
-				glm::vec2 uv1 = orderedUVData.at((i + 1)%8);
-				glm::vec2 uv2 = orderedUVData.at((i + 2)%8);
+			glm::vec2 uv0 = orderedUVData.at(i);
+			glm::vec2 uv1 = orderedUVData.at((i + 1) % orderedUVData.size());
+			glm::vec2 uv2 = orderedUVData.at((i + 2) % orderedUVData.size());
 
-				glm::vec3 deltaPos1 = v1 - v0;
-				glm::vec3 deltaPos2 = v2 - v0;
+			glm::vec3 deltaPos1 = v1 - v0;
+			glm::vec3 deltaPos2 = v2 - v0;
 
-				glm::vec2 deltaUV1 = uv1 - uv0;
-				glm::vec2 deltaUV2 = uv2 - uv0;
+			glm::vec2 deltaUV1 = uv1 - uv0;
+			glm::vec2 deltaUV2 = uv2 - uv0;
 
-				float f = 1.0f / (deltaUV1.x * deltaUV2.y - deltaUV2.x * deltaUV1.y);
+			float f = 1.0f / (deltaUV1.x * deltaUV2.y - deltaUV2.x * deltaUV1.y);
 
-				glm::vec3 tangent;
-				glm::vec3 bitangent;
+			glm::vec3 tangent;
+			glm::vec3 bitangent;
 
-				tangent.x = f * (deltaUV2.y * deltaPos1.x - deltaUV1.y * deltaPos2.x);
-				tangent.y = f * (deltaUV2.y * deltaPos1.y - deltaUV1.y * deltaPos2.y);
-				tangent.z = f * (deltaUV2.y * deltaPos1.z - deltaUV1.y * deltaPos2.z);
-				tangent = glm::normalize(tangent);
-				tangentData.push_back(tangent);
-				tangentData.push_back(tangent);
-				tangentData.push_back(tangent);
+			tangent.x = f * (deltaUV2.y * deltaPos1.x - deltaUV1.y * deltaPos2.x);
+			tangent.y = f * (deltaUV2.y * deltaPos1.y - deltaUV1.y * deltaPos2.y);
+			tangent.z = f * (deltaUV2.y * deltaPos1.z - deltaUV1.y * deltaPos2.z);
+			tangent = glm::normalize(tangent);
+			tangentData.push_back(tangent);
+			tangentData.push_back(tangent);
+			tangentData.push_back(tangent);
 
-				bitangent.x = f * (-deltaUV2.x * deltaPos1.x + deltaUV1.x * deltaPos2.x);
-				bitangent.y = f * (-deltaUV2.x * deltaPos1.y + deltaUV1.x * deltaPos2.y);
-				bitangent.z = f * (-deltaUV2.x * deltaPos1.z + deltaUV1.x * deltaPos2.z);
-				bitangent = glm::normalize(bitangent);
-				biTangentData.push_back(bitangent);
-				biTangentData.push_back(bitangent);
-				biTangentData.push_back(bitangent);
-			}
-
+			bitangent.x = f * (-deltaUV2.x * deltaPos1.x + deltaUV1.x * deltaPos2.x);
+			bitangent.y = f * (-deltaUV2.x * deltaPos1.y + deltaUV1.x * deltaPos2.y);
+			bitangent.z = f * (-deltaUV2.x * deltaPos1.z + deltaUV1.x * deltaPos2.z);
+			bitangent = glm::normalize(bitangent);
+			biTangentData.push_back(bitangent);
+			biTangentData.push_back(bitangent);
+			biTangentData.push_back(bitangent);
+				
+		}
+			
 		inputFile.close();
 
-		_numVertices = orderedPositionData.size();
+		m_numVertices = orderedPositionData.size();
 
-		if( _numVertices > 0 )
+		if( m_numVertices > 0 )
 		{
 
-			glBindVertexArray( _VAO );
+			glBindVertexArray( m_VAO );
 
 						// Variable for storing a VBO
 			GLuint posBuffer = 0;
@@ -267,7 +265,7 @@ void Mesh::LoadOBJ( std::string filename, bool _paralax)
 			// With this buffer active, we can now send our data to OpenGL
 			// We need to tell it how much data to send
 			// We can also tell OpenGL how we intend to use this buffer - here we say GL_STATIC_DRAW because we're only writing it once
-			glBufferData(GL_ARRAY_BUFFER, sizeof(float) * _numVertices * 3, &orderedPositionData[0], GL_STATIC_DRAW);
+			glBufferData(GL_ARRAY_BUFFER, sizeof(float) * m_numVertices * 3, &orderedPositionData[0], GL_STATIC_DRAW);
 
 			// This tells OpenGL how we link the vertex data to the shader
 			// (We will look at this properly in the lectures)
@@ -285,7 +283,7 @@ void Mesh::LoadOBJ( std::string filename, bool _paralax)
 				// With this buffer active, we can now send our data to OpenGL
 				// We need to tell it how much data to send
 				// We can also tell OpenGL how we intend to use this buffer - here we say GL_STATIC_DRAW because we're only writing it once
-				glBufferData(GL_ARRAY_BUFFER, sizeof(float) * _numVertices * 3, &orderedNormalData[0], GL_STATIC_DRAW);
+				glBufferData(GL_ARRAY_BUFFER, sizeof(float) * m_numVertices * 3, &orderedNormalData[0], GL_STATIC_DRAW);
 
 				// This tells OpenGL how we link the vertex data to the shader
 				// (We will look at this properly in the lectures)
@@ -305,7 +303,7 @@ void Mesh::LoadOBJ( std::string filename, bool _paralax)
 				// With this buffer active, we can now send our data to OpenGL
 				// We need to tell it how much data to send
 				// We can also tell OpenGL how we intend to use this buffer - here we say GL_STATIC_DRAW because we're only writing it once
-				glBufferData(GL_ARRAY_BUFFER, sizeof(float) * _numVertices * 2, &orderedUVData[0], GL_STATIC_DRAW);
+				glBufferData(GL_ARRAY_BUFFER, sizeof(float) * m_numVertices * 2, &orderedUVData[0], GL_STATIC_DRAW);
 
 				// This tells OpenGL how we link the vertex data to the shader
 				// (We will look at this properly in the lectures)
@@ -321,7 +319,7 @@ void Mesh::LoadOBJ( std::string filename, bool _paralax)
 
 				glBindBuffer(GL_ARRAY_BUFFER, tangentBuffer);
 
-				glBufferData(GL_ARRAY_BUFFER, sizeof(float) * _numVertices * 3, &tangentData[0], GL_STATIC_DRAW);
+				glBufferData(GL_ARRAY_BUFFER, sizeof(float) * m_numVertices * 3, &tangentData[0], GL_STATIC_DRAW);
 
 				glVertexAttribPointer(3, 3, GL_FLOAT, GL_FALSE, 0, 0);
 				glEnableVertexAttribArray(3);
@@ -333,7 +331,7 @@ void Mesh::LoadOBJ( std::string filename, bool _paralax)
 
 				glBindBuffer(GL_ARRAY_BUFFER, biTangentBuffer);
 
-				glBufferData(GL_ARRAY_BUFFER, sizeof(float) * _numVertices * 3, &biTangentData[0], GL_STATIC_DRAW);
+				glBufferData(GL_ARRAY_BUFFER, sizeof(float) * m_numVertices * 3, &biTangentData[0], GL_STATIC_DRAW);
 
 				glVertexAttribPointer(4, 3, GL_FLOAT, GL_FALSE, 0, 0);
 				glEnableVertexAttribArray(4);
@@ -348,9 +346,9 @@ void Mesh::LoadOBJ( std::string filename, bool _paralax)
 
 void Mesh::CreateMesh(float vertices[])
 {
-	glBindVertexArray(_VAO);
+	glBindVertexArray(m_VAO);
 
-	_numVertices = 36;
+	m_numVertices = 36;
 
 	GLuint buffer = 0;
 
@@ -358,7 +356,7 @@ void Mesh::CreateMesh(float vertices[])
 
 	glBindBuffer(GL_ARRAY_BUFFER, buffer);
 
-	glBufferData(GL_ARRAY_BUFFER, sizeof(float) * _numVertices * 3, vertices, GL_STATIC_DRAW);
+	glBufferData(GL_ARRAY_BUFFER, sizeof(float) * m_numVertices * 3, vertices, GL_STATIC_DRAW);
 
 	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, 0);
 	glEnableVertexAttribArray(0);
@@ -376,11 +374,11 @@ void Mesh::CreateMesh(float vertices[])
 void Mesh::Draw()
 {
 		// Activate the VAO
-		glBindVertexArray( _VAO );
+		glBindVertexArray( m_VAO );
 
 			// Tell OpenGL to draw it
 			// Must specify the type of geometry to draw and the number of vertices
-			glDrawArrays(GL_TRIANGLES, 0, _numVertices);
+			glDrawArrays(GL_TRIANGLES, 0, m_numVertices);
 			
 		// Unbind VAO
 		glBindVertexArray( 0 );

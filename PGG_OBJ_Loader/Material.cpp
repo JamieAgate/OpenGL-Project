@@ -1,26 +1,23 @@
+///  @file Material.cpp
+///  @brief Code that deals with all shaders, textures and materials
 
-#include <iostream>
-#include <fstream>
-#include <SDL/SDL.h>
-#include <GLM/gtc/type_ptr.hpp>
-#include <GLM/gtc/matrix_transform.hpp>
 #include "Material.h"
 
 Material::Material()
 {
 	// Initialise everything here
-	_shaderModelMatLocation = 0;
-	_shaderViewMatLocation = 0;
-	_shaderProjMatLocation = 0;
+	m_shaderModelMatLocation = 0;
+	m_shaderViewMatLocation = 0;
+	m_shaderProjMatLocation = 0;
 
-	_shaderDiffuseColLocation = 0;
-	_shaderEmissiveColLocation = 0;
-	_shaderWSLightPosLocation = 0;
-	_shaderSpecularColLocation = 0;
+	m_shaderDiffuseColLocation = 0;
+	m_shaderEmissiveColLocation = 0;
+	m_shaderWSLightPosLocation = 0;
+	m_shaderSpecularColLocation = 0;
 
-	_shaderTex1SamplerLocation = 0;
+	m_shaderTex1SamplerLocation = 0;
 
-	_texture1 = 0;
+	m_texture1 = 0;
 }
 
 Material::~Material()
@@ -111,7 +108,7 @@ bool Material::LoadShaders( std::string vertFilename, std::string fragFilename )
 
 
 	// The 'program' stores the shaders
-	_shaderProgram = glCreateProgram();
+	m_shaderProgram = glCreateProgram();
 
 	// Create the vertex shader
 	GLuint vShader = glCreateShader( GL_VERTEX_SHADER );
@@ -128,7 +125,7 @@ bool Material::LoadShaders( std::string vertFilename, std::string fragFilename )
 		return false;
 	}
 	// This links the shader to the program
-	glAttachShader( _shaderProgram, vShader );
+	glAttachShader( m_shaderProgram, vShader );
 
 	// Same for the fragment shader
 	GLuint fShader = glCreateShader( GL_FRAGMENT_SHADER );
@@ -141,20 +138,20 @@ bool Material::LoadShaders( std::string vertFilename, std::string fragFilename )
 		std::cerr<<"ERROR: failed to compile fragment shader"<<std::endl;
 		return false;
 	}
-	glAttachShader( _shaderProgram, fShader );
+	glAttachShader( m_shaderProgram, fShader );
 
 	// This makes sure the vertex and fragment shaders connect together
-	glLinkProgram( _shaderProgram );
+	glLinkProgram( m_shaderProgram );
 	// Check this worked
 	GLint linked;
-	glGetProgramiv( _shaderProgram, GL_LINK_STATUS, &linked );
+	glGetProgramiv( m_shaderProgram, GL_LINK_STATUS, &linked );
 	if ( !linked )
 	{
 		GLsizei len;
-		glGetProgramiv( _shaderProgram, GL_INFO_LOG_LENGTH, &len );
+		glGetProgramiv( m_shaderProgram, GL_INFO_LOG_LENGTH, &len );
 
 		GLchar* log = new GLchar[len+1];
-		glGetProgramInfoLog( _shaderProgram, len, &len, log );
+		glGetProgramInfoLog( m_shaderProgram, len, &len, log );
 		std::cerr << "ERROR: Shader linking failed: " << log << std::endl;
 		delete [] log;
 
@@ -164,20 +161,20 @@ bool Material::LoadShaders( std::string vertFilename, std::string fragFilename )
 
 	// We will define matrices which we will send to the shader
 	// To do this we need to retrieve the locations of the shader's matrix uniform variables
-	glUseProgram( _shaderProgram );
-	_shaderModelMatLocation = glGetUniformLocation( _shaderProgram, "modelMat" );
-	_shaderInvModelMatLocation = glGetUniformLocation( _shaderProgram, "invModelMat" );
-	_shaderViewMatLocation = glGetUniformLocation( _shaderProgram, "viewMat" );
-	_shaderProjMatLocation = glGetUniformLocation( _shaderProgram, "projMat" );
+	glUseProgram( m_shaderProgram );
+	m_shaderModelMatLocation = glGetUniformLocation( m_shaderProgram, "modelMat" );
+	m_shaderInvModelMatLocation = glGetUniformLocation( m_shaderProgram, "invModelMat" );
+	m_shaderViewMatLocation = glGetUniformLocation( m_shaderProgram, "viewMat" );
+	m_shaderProjMatLocation = glGetUniformLocation( m_shaderProgram, "projMat" );
 		
-	_shaderDiffuseColLocation = glGetUniformLocation( _shaderProgram, "diffuseColour" );
-	_shaderEmissiveColLocation = glGetUniformLocation( _shaderProgram, "emissiveColour" );
-	_shaderSpecularColLocation = glGetUniformLocation( _shaderProgram, "specularColour" );
-	_shaderWSLightPosLocation = glGetUniformLocation( _shaderProgram, "worldSpaceLightPos" );
+	m_shaderDiffuseColLocation = glGetUniformLocation( m_shaderProgram, "diffuseColour" );
+	m_shaderEmissiveColLocation = glGetUniformLocation( m_shaderProgram, "emissiveColour" );
+	m_shaderSpecularColLocation = glGetUniformLocation( m_shaderProgram, "specularColour" );
+	m_shaderWSLightPosLocation = glGetUniformLocation( m_shaderProgram, "worldSpaceLightPos" );
 
-	_shaderTex1SamplerLocation = glGetUniformLocation( _shaderProgram, "material.diffuseMap" );
-	_shaderSpecularLocation = glGetUniformLocation(_shaderProgram, "material.specMap");
-	_shaderCubeMapLocation = glGetUniformLocation(_shaderProgram, "skybox");
+	m_shaderTex1SamplerLocation = glGetUniformLocation( m_shaderProgram, "material.diffuseMap" );
+	m_shaderSpecularLocation = glGetUniformLocation(m_shaderProgram, "material.specMap");
+	m_shaderCubeMapLocation = glGetUniformLocation(m_shaderProgram, "skybox");
 
 	return true;
 }
@@ -243,37 +240,37 @@ unsigned int Material::LoadTexture( std::string filename )
 
 void Material::SetMatrices(glm::mat4 modelMatrix, glm::mat4 invModelMatrix, glm::mat4 viewMatrix, glm::mat4 projMatrix)
 {
-	glUseProgram( _shaderProgram );
+	glUseProgram( m_shaderProgram );
 		// Send matrices and uniforms
-	glUniformMatrix4fv(_shaderModelMatLocation, 1, GL_FALSE, glm::value_ptr(modelMatrix) );
-	glUniformMatrix4fv(_shaderInvModelMatLocation, 1, GL_TRUE, glm::value_ptr(invModelMatrix) );
-	glUniformMatrix4fv(_shaderViewMatLocation, 1, GL_FALSE, glm::value_ptr(viewMatrix) );
-	glUniformMatrix4fv(_shaderProjMatLocation, 1, GL_FALSE, glm::value_ptr(projMatrix) );
+	glUniformMatrix4fv(m_shaderModelMatLocation, 1, GL_FALSE, glm::value_ptr(modelMatrix) );
+	glUniformMatrix4fv(m_shaderInvModelMatLocation, 1, GL_TRUE, glm::value_ptr(invModelMatrix) );
+	glUniformMatrix4fv(m_shaderViewMatLocation, 1, GL_FALSE, glm::value_ptr(viewMatrix) );
+	glUniformMatrix4fv(m_shaderProjMatLocation, 1, GL_FALSE, glm::value_ptr(projMatrix) );
 }
 	
 void Material::Apply()
 {
-	glUseProgram(_shaderProgram);
+	glUseProgram(m_shaderProgram);
 
-	glUniform3fv( _shaderEmissiveColLocation, 1, glm::value_ptr(_emissiveColour) );
-	glUniform3fv( _shaderDiffuseColLocation, 1, glm::value_ptr(_diffuseColour) );
-	glUniform3fv( _shaderSpecularColLocation, 1, glm::value_ptr(_specularColour) );
+	glUniform3fv( m_shaderEmissiveColLocation, 1, glm::value_ptr(m_emissiveColour) );
+	glUniform3fv( m_shaderDiffuseColLocation, 1, glm::value_ptr(m_diffuseColour) );
+	glUniform3fv( m_shaderSpecularColLocation, 1, glm::value_ptr(m_specularColour) );
 	
-	glUniform3f(glGetUniformLocation(_shaderProgram,"cameraPos"),m_cameraPos.x,m_cameraPos.y,m_cameraPos.z);
-	glUniform3f(glGetUniformLocation(_shaderProgram, "viewPos"), m_cameraPos.x, m_cameraPos.y, m_cameraPos.z);
+	glUniform3f(glGetUniformLocation(m_shaderProgram,"cameraPos"),m_cameraPos.x,m_cameraPos.y,m_cameraPos.z);
+	glUniform3f(glGetUniformLocation(m_shaderProgram, "viewPos"), m_cameraPos.x, m_cameraPos.y, m_cameraPos.z);
 
-	glUniform3f(glGetUniformLocation(_shaderProgram, "material.ambient"), 1.0f, 0.5f, 0.31f);
-	glUniform3f(glGetUniformLocation(_shaderProgram, "material.diffuse"), 1.0f, 0.5f, 0.31f);
-	glUniform3f(glGetUniformLocation(_shaderProgram, "material.specular"), 0.5f, 0.5f, 0.5f);
-	glUniform1f(glGetUniformLocation(_shaderProgram, "material.shininess"), 32.0f);
-
+	glUniform3f(glGetUniformLocation(m_shaderProgram, "material.ambient"), 1.0f, 0.5f, 0.31f);
+	glUniform3f(glGetUniformLocation(m_shaderProgram, "material.diffuse"), 1.0f, 0.5f, 0.31f);
+	glUniform3f(glGetUniformLocation(m_shaderProgram, "material.specular"), 0.5f, 0.5f, 0.5f);
+	glUniform1f(glGetUniformLocation(m_shaderProgram, "material.shininess"), 32.0f);
+	//sets directional light
 	setVec3("dirLight.direction", 4.0f, 6.0f, 3.0f);
 	setVec3("lightPos", 4.0f, 6.0f, 3.0f);
 	setVec3("dirLight.ambient", 0.05f, 0.05f, 0.05f);
 	setVec3("dirLight.diffuse", 0.4f, 0.4f, 0.4f);
 	setVec3("dirLight.specular", 0.5f, 0.5f, 0.5f);
 	// point light 1
-	setVec3("pointLights[0].position", _lightPosition[0].x, _lightPosition[0].y, _lightPosition[0].z);
+	setVec3("pointLights[0].position", m_lightPosition[0].x, m_lightPosition[0].y, m_lightPosition[0].z);
 	setVec3("pointLights[0].ambient", 0.05f, 0.05f, 0.05f);
 	setVec3("pointLights[0].diffuse", 0.8f, 0.8f, 0.8f);
 	setVec3("pointLights[0].specular", 1.0f, 1.0f, 1.0f);
@@ -281,7 +278,7 @@ void Material::Apply()
 	setFloat("pointLights[0].linear", 0.09);
 	setFloat("pointLights[0].quadratic", 0.032);
 	// point light 2
-	setVec3("pointLights[1].position", _lightPosition[1].x, _lightPosition[1].y, _lightPosition[1].z);
+	setVec3("pointLights[1].position", m_lightPosition[1].x, m_lightPosition[1].y, m_lightPosition[1].z);
 	setVec3("pointLights[1].ambient", 0.05f, 0.05f, 0.05f);
 	setVec3("pointLights[1].diffuse", 0.8f, 0.8f, 0.8f);
 	setVec3("pointLights[1].specular", 1.0f, 1.0f, 1.0f);
@@ -289,7 +286,7 @@ void Material::Apply()
 	setFloat("pointLights[1].linear", 0.09);
 	setFloat("pointLights[1].quadratic", 0.032);
 	// point light 3
-	setVec3("pointLights[2].position", _lightPosition[2].x, _lightPosition[2].y, _lightPosition[2].z);
+	setVec3("pointLights[2].position", m_lightPosition[2].x, m_lightPosition[2].y, m_lightPosition[2].z);
 	setVec3("pointLights[2].ambient", 0.05f, 0.05f, 0.05f);
 	setVec3("pointLights[2].diffuse", 0.8f, 0.8f, 0.8f);
 	setVec3("pointLights[2].specular", 1.0f, 1.0f, 1.0f);
@@ -297,7 +294,7 @@ void Material::Apply()
 	setFloat("pointLights[2].linear", 0.09);
 	setFloat("pointLights[2].quadratic", 0.032);
 	// point light 4
-	setVec3("pointLights[3].position", _lightPosition[3].x, _lightPosition[3].y, _lightPosition[3].z);
+	setVec3("pointLights[3].position", m_lightPosition[3].x, m_lightPosition[3].y, m_lightPosition[3].z);
 	setVec3("pointLights[3].ambient", 0.05f, 0.05f, 0.05f);
 	setVec3("pointLights[3].diffuse", 0.8f, 0.8f, 0.8f);
 	setVec3("pointLights[3].specular", 1.0f, 1.0f, 1.0f);
@@ -318,30 +315,30 @@ void Material::Apply()
 	setFloat("flashlight.quadratic", 0.032f);
 
 	glActiveTexture(GL_TEXTURE0);
-	glUniform1i(_shaderTex1SamplerLocation,0);
-	glBindTexture(GL_TEXTURE_2D, _texture1);
+	glUniform1i(m_shaderTex1SamplerLocation,0);
+	glBindTexture(GL_TEXTURE_2D, m_texture1);
 
-	glBindTexture(GL_TEXTURE_CUBE_MAP, _skyboxTex);
+	glBindTexture(GL_TEXTURE_CUBE_MAP, m_skyboxTex);
 
 	glActiveTexture(GL_TEXTURE1);
-	glUniform1i(_shaderSpecularLocation, 1);
+	glUniform1i(m_shaderSpecularLocation, 1);
 	glBindTexture(GL_TEXTURE_2D, m_specularMap);
 }
 
 void Material::setBool(const std::string &name, bool value) const
 {
-	glUniform1i(glGetUniformLocation(_shaderProgram, name.c_str()), (int)value);
+	glUniform1i(glGetUniformLocation(m_shaderProgram, name.c_str()), (int)value);
 }
 void Material::setInt(const std::string &name, int value) const
 {
-	glUniform1i(glGetUniformLocation(_shaderProgram, name.c_str()), value);
+	glUniform1i(glGetUniformLocation(m_shaderProgram, name.c_str()), value);
 }
 void Material::setFloat(const std::string &name, float value) const
 {
-	glUniform1f(glGetUniformLocation(_shaderProgram, name.c_str()), value);
+	glUniform1f(glGetUniformLocation(m_shaderProgram, name.c_str()), value);
 }
 
 void Material::setVec3(const std::string &name, float x, float y, float z) const
 {
-	glUniform3f(glGetUniformLocation(_shaderProgram, name.c_str()), x, y, z);
+	glUniform3f(glGetUniformLocation(m_shaderProgram, name.c_str()), x, y, z);
 }
